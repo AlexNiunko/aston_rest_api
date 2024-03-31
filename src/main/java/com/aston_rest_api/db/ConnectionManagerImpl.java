@@ -30,9 +30,9 @@ public class ConnectionManagerImpl implements ConnectionManager {
             dataSource.setUsername(PROPERTIES.getProperty("collectionManagerImpl.user"));
             dataSource.setPassword(PROPERTIES.getProperty("collectionManagerImpl.password"));
             dataSource.setMinimumIdle(5);
-            dataSource.setMaximumPoolSize(10);
-            dataSource.setAutoCommit(false);
-            dataSource.setLoginTimeout(3);
+            dataSource.setMaximumPoolSize(1000);
+            dataSource.setAutoCommit(true);
+            dataSource.setLoginTimeout(10);
         }catch (IOException |SQLException e){
             throw new ExceptionInInitializerError("Failed to read configuration fail"+e);
         }
