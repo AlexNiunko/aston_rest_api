@@ -5,5 +5,5 @@ import java.time.LocalDateTime;
 public class SaleDto extends AbstractDto {
     private long buyerId;
     private long productId;
-    private LocalDateTime dateOfSale;
+    private String dateOfSale;
 }

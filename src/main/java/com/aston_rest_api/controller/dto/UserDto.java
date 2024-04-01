@@ -4,10 +4,10 @@ import java.util.Map;
 
 public class UserDto extends AbstractDto {
     private String login;
-    private byte [] password;
+    private String password;
     private String name;
     private String surname;
-    private boolean isAdmin;
+    private int isAdmin;
     private Map<Long, ProductDto>purchases;
 
 }

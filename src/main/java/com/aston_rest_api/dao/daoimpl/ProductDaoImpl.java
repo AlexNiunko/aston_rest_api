@@ -1,6 +1,5 @@
-package com.aston_rest_api.dao.impl;
+package com.aston_rest_api.dao.daoimpl;
 
-import com.aston_rest_api.controller.ProductArguments;
 import com.aston_rest_api.dao.BaseDao;
 import com.aston_rest_api.dao.ProductDao;
 import com.aston_rest_api.dao.mapper.ResultSetMapper;
