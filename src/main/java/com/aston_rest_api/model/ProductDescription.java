@@ -1,13 +1,15 @@
 package com.aston_rest_api.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class ProductDescription extends AbstractEntity {
     private long productID;
     private String countryOfOrigin;
     private String type;
     private String brand;
-    private LocalDateTime issueDate;
+    private LocalDate issueDate;
 
     private ProductDescription(ProductDescriptionBuilder builder) {
         super(builder.productDescriptionId);
@@ -51,26 +53,39 @@ public class ProductDescription extends AbstractEntity {
         this.brand = brand;
     }
 
-    public LocalDateTime getIssueDate() {
+    public LocalDate getIssueDate() {
         return issueDate;
     }
 
-    public void setIssueDate(LocalDateTime issueDate) {
+    public void setIssueDate(LocalDate issueDate) {
         this.issueDate = issueDate;
     }
 
     @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("ProductDescriptionDto{");
-        sb.append("productID=").append(productID);
-        sb.append(", countryOfOrigin='").append(countryOfOrigin).append('\'');
-        sb.append(", type='").append(type).append('\'');
-        sb.append(", brand='").append(brand).append('\'');
-        sb.append(", issueDate=").append(issueDate);
-        sb.append(", id=").append(id);
-        sb.append('}');
-        return sb.toString();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ProductDescription)) return false;
+        ProductDescription that = (ProductDescription) o;
+        return getProductID() == that.getProductID() && getCountryOfOrigin().equals(that.getCountryOfOrigin()) && getType().equals(that.getType()) && getBrand().equals(that.getBrand()) && getIssueDate().equals(that.getIssueDate());
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getProductID(), getCountryOfOrigin(), getType(), getBrand(), getIssueDate());
+    }
+
+//    @Override
+//    public String toString() {
+//        final StringBuilder sb = new StringBuilder("ProductDescriptionDto{");
+//        sb.append("productID=").append(productID);
+//        sb.append(", countryOfOrigin='").append(countryOfOrigin).append('\'');
+//        sb.append(", type='").append(type).append('\'');
+//        sb.append(", brand='").append(brand).append('\'');
+//        sb.append(", issueDate=").append(issueDate);
+//        sb.append(", id=").append(id);
+//        sb.append('}');
+//        return sb.toString();
+//    }
 
     public static class ProductDescriptionBuilder {
         private long productDescriptionId;
@@ -78,7 +93,7 @@ public class ProductDescription extends AbstractEntity {
         private String countryOfOrigin;
         private String type;
         private String brand;
-        private LocalDateTime issueDate;
+        private LocalDate issueDate;
 
         public ProductDescriptionBuilder(long productDescriptionId) {
             this.productDescriptionId = productDescriptionId;
@@ -99,7 +114,7 @@ public class ProductDescription extends AbstractEntity {
             this.brand = brand;
             return this;
         }
-        public ProductDescriptionBuilder setIssueDate (LocalDateTime issueDate) {
+        public ProductDescriptionBuilder setIssueDate (LocalDate issueDate) {
             this.issueDate = issueDate;
             return this;
         }

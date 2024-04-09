@@ -1,20 +1,10 @@
-# Use root/example as user/password credentials
-version: '3.1'
+          version: '3.1'
 
-services:
-
-  db:
-    image: mysql:8.0.31
-    restart: always
-    container_name: spikemysql
-    ports:
-      - 127.0.0.1:3306:3306
-    environment:
-      MYSQL_USER: root
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-        - 8080:8080
-
+          services:
+            db:
+              image: postgres:10-alpine
+              environment:
+                MYSQL_ROOT_PASSWORD: pass
+                MYSQL_DATABASE: tool_box
+              ports:
+                - 5432:5432

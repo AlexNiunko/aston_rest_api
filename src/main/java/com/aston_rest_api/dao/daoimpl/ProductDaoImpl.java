@@ -5,13 +5,11 @@ import com.aston_rest_api.dao.ProductDao;
 import com.aston_rest_api.dao.mapper.ResultSetMapper;
 import com.aston_rest_api.dao.mapper.impl.ProductResultSetMapperImpl;
 import com.aston_rest_api.db.ConnectionManagerImpl;
+import com.aston_rest_api.exception.DaoException;
 import com.aston_rest_api.model.Product;
 import com.aston_rest_api.model.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,62 +17,62 @@ import java.util.Optional;
 
 public class ProductDaoImpl extends BaseDao<Product> implements ProductDao {
 
-    private static final String INSERT_PRODUCT =
+    public static final String INSERT_PRODUCT =
             """
-                    INSERT INTO products 
+                    INSERT INTO tool_box.products 
                     (id_product,product_name,product_price,amount_of_product)
                     VALUES(?,?,?,?)
                     """;
-    private static final String INSERT_PRODUCT_DESCRIPTION =
+    public static final String INSERT_PRODUCT_DESCRIPTION =
             """
-                    INSERT INTO product_descriptions 
+                    INSERT INTO tool_box.product_descriptions 
                     (id_description,product_id,country_of_origin,type_of_product,brand_of_product,issue_date)
                     VALUES(?,?,?,?,?,?)
                     """;
-    private static final String DELETE_PRODUCT_BY_ID =
-            "DELETE FROM products WHERE id_product=?";
-    private static final String DELETE_PRODUCT_DESCRIPTION_BY_ID =
-            "DELETE FROM product_descriptions WHERE id_description=?";
-    private static final String FIND_ALL_PRODUCTS =
-            "SELECT * FROM  products p  JOIN product_descriptions pd ON p.id_product=pd.product_id";
-    private static final String UPDATE_PRODUCT_BY_ID =
+    public static final String DELETE_PRODUCT_BY_ID =
+            "DELETE FROM tool_box.products WHERE id_product=?";
+    public static final String DELETE_PRODUCT_DESCRIPTION_BY_ID =
+            "DELETE FROM tool_box.product_descriptions WHERE id_description=?";
+    public static final String FIND_ALL_PRODUCTS =
+            "SELECT * FROM  tool_box.products p  JOIN tool_box.product_descriptions pd ON p.id_product=pd.product_id";
+    public static final String UPDATE_PRODUCT_BY_ID =
             """
-                    UPDATE products SET (product_name,product_price,amount_of_product) VALUES (?,?,?)
+                    UPDATE tool_box.products SET product_name=?,product_price=?,amount_of_product=?
                     WHERE id_product=?
                     """;
-    private static final String UPDATE_PRODUCT_DESCRIPTION_BY_ID=
+    public static final String UPDATE_PRODUCT_DESCRIPTION_BY_ID=
             """
-                    UPDATE product_descriptions SET(country_of_origin,type_of_product,brand_of_product,issue_date)
-                    VALUES (?,?,?,?) WHERE id_description=?
+                    UPDATE tool_box.product_descriptions SET country_of_origin=?,type_of_product=?,brand_of_product=?,issue_date=?
+                     WHERE id_description=?
                     """;
-    private static final String FIND_PRODUCT_BY_ID=
+    public static final String FIND_PRODUCT_BY_ID=
             """
-                    SELECT from products p JOIN product_descriptions pd 
+                    SELECT * FROM tool_box.products p JOIN tool_box.product_descriptions pd 
                     ON p.id_product=pd.product_id 
                     WHERE p.id_product=?
                     """;
-    private static final String FIND_ALL_PRODUCT_BUYERS=
+    public static final String FIND_ALL_PRODUCT_BUYERS=
             """
-                    SELECT * FROM products p JOIN sales s ON p.id_product=s.product_id
-                    JOIN users u ON u.user_id=s.buyer_id
+                    SELECT * FROM tool_box.products p JOIN tool_box.sales s ON p.id_product=s.product_id
+                    JOIN tool_box.users u ON u.user_id=s.buyer_id
                     WHERE p.id_product=? 
                     """;
 
     private ConnectionManagerImpl connectionManager;
-    private ResultSetMapper resultSetMapper;
-
-    private static ProductDaoImpl instance = new ProductDaoImpl();
+    private ResultSetMapper resultSetMapper=ProductResultSetMapperImpl.getInstance();;
 
 
-    private ProductDaoImpl() {
-        this.connectionManager = ConnectionManagerImpl.getInstance();
-        resultSetMapper = ProductResultSetMapperImpl.getInstance();
+    public ProductDaoImpl(ConnectionManagerImpl connectionManager) {
+        this.connectionManager = connectionManager;
     }
 
 
     @Override
-    public boolean insert(Product product) {
+    public boolean insert(Product product) throws DaoException {
         boolean result = false;
+        if (product==null){
+            return result;
+        }
         try (Connection connection = connectionManager.getConnection()) {
             try (PreparedStatement productStatement = connection.prepareStatement(INSERT_PRODUCT);
                  PreparedStatement descriptionStatement = connection.prepareStatement(INSERT_PRODUCT_DESCRIPTION)) {
@@ -84,62 +82,70 @@ public class ProductDaoImpl extends BaseDao<Product> implements ProductDao {
                 productStatement.setDouble(3, product.getProductPrice());
                 productStatement.setInt(4, product.getAmount());
                 descriptionStatement.setLong(1, product.getDescription().getId());
-                descriptionStatement.setLong(2, product.getDescription().getProductID());
+                descriptionStatement.setLong(2,product.getDescription().getProductID());
                 descriptionStatement.setString(3, product.getDescription().getCountryOfOrigin());
                 descriptionStatement.setString(4, product.getDescription().getType());
                 descriptionStatement.setString(5, product.getDescription().getBrand());
-                descriptionStatement.setString(6, product.getDescription().getIssueDate().toString());
+                descriptionStatement.setDate(6, Date.valueOf(product.getDescription().getIssueDate()));
                 result = (productStatement.executeUpdate() == 1 && descriptionStatement.executeUpdate() == 1);
                 connection.commit();
             } catch (SQLException e) {
                 connection.rollback();
+                throw new DaoException("Failed to insert new product "+e);
             } finally {
                 connection.setAutoCommit(true);
             }
         } catch (SQLException e) {
-
+            throw new DaoException("Failed to insert product "+e);
         }
         return result;
     }
 
     @Override
-    public boolean delete(Product product) {
+    public boolean delete(Product product) throws DaoException {
         boolean result = false;
+        if (product==null){
+            return result;
+        }
         try (Connection connection = connectionManager.getConnection()) {
             try (PreparedStatement productStatement = connection.prepareStatement(DELETE_PRODUCT_BY_ID);
                  PreparedStatement descriptionStatement = connection.prepareStatement(DELETE_PRODUCT_DESCRIPTION_BY_ID)) {
                 connection.setAutoCommit(false);
                 productStatement.setLong(1, product.getId());
                 descriptionStatement.setLong(1, product.getDescription().getId());
-                result = (productStatement.executeUpdate() == 1 && descriptionStatement.executeUpdate() == 1);
+                result = productStatement.executeUpdate() == 1 && descriptionStatement.executeUpdate() == 0;
                 connection.commit();
             } catch (SQLException e) {
                 connection.rollback();
+                throw new DaoException("Failed to delete product or product description "+e);
             } finally {
                 connection.setAutoCommit(true);
             }
         } catch (SQLException e) {
-
+            throw new DaoException("Failed delete product "+e);
         }
         return result;
     }
 
     @Override
-    public List<Product> findAll() {
+    public List<Product> findAll() throws DaoException {
         List<Product> productList = new ArrayList<>();
         try (Connection connection = connectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(FIND_ALL_PRODUCTS);
              ResultSet resultSet = statement.executeQuery()) {
             productList = resultSetMapper.mapListItems(resultSet);
         } catch (SQLException e) {
-
+            throw new DaoException("Failed to find all products "+e);
         }
         return productList;
     }
 
     @Override
-    public boolean update(Product product) {
+    public boolean update(Product product) throws DaoException {
         boolean result=false;
+        if (product==null){
+            return result;
+        }
         try(Connection connection= connectionManager.getConnection()){
             try(PreparedStatement statementProduct=connection.prepareStatement(UPDATE_PRODUCT_BY_ID);
                PreparedStatement statementDescription=connection.prepareStatement(UPDATE_PRODUCT_DESCRIPTION_BY_ID)){
@@ -151,25 +157,30 @@ public class ProductDaoImpl extends BaseDao<Product> implements ProductDao {
                statementDescription.setString(1,product.getDescription().getCountryOfOrigin());
                statementDescription.setString(2,product.getDescription().getType());
                statementDescription.setString(3,product.getDescription().getBrand());
-               statementDescription.setString(4,product.getDescription().getIssueDate().toString());
-               result=(statementProduct.executeUpdate()==1 && statementDescription.executeUpdate()==1);
+               statementDescription.setDate(4, Date.valueOf(product.getDescription().getIssueDate()));
+               statementDescription.setLong(5,product.getDescription().getId());
+               result=(statementProduct.executeUpdate()==1) || (statementDescription.executeUpdate()==1) ;
                connection.commit();
             }catch (SQLException e){
                 connection.rollback();
+                throw new DaoException("Failed to update product "+e);
             }
             finally {
                 connection.setAutoCommit(true);
             }
         }catch (SQLException e){
-
+            throw new DaoException("Failed to update product "+e);
         }
         return result;
     }
 
 
     @Override
-    public Optional<Product> findProductById(Product product) {
+    public Optional<Product> findProductById(Product product) throws DaoException {
         Optional<Product>optionalProduct=Optional.empty();
+        if (product==null){
+            return optionalProduct;
+        }
         try(Connection connection= connectionManager.getConnection();
         PreparedStatement statement=connection.prepareStatement(FIND_PRODUCT_BY_ID)) {
             statement.setLong(1,product.getId());
@@ -177,14 +188,17 @@ public class ProductDaoImpl extends BaseDao<Product> implements ProductDao {
              optionalProduct=resultSetMapper.mapItem(resultSet);
             }
         }catch (SQLException e){
-
+            throw new DaoException("Failed to find product by id "+e);
         }
         return optionalProduct;
     }
 
     @Override
-    public Optional<Product> findProductBuyers(Product product) {
+    public Optional<Product> findProductBuyers(Product product) throws DaoException {
         Optional<Product>optionalProduct=Optional.empty();
+        if (product==null){
+            return optionalProduct;
+        }
         Map<Long,User>buyers;
         long productId= product.getId();
         try(Connection connection= connectionManager.getConnection();
@@ -195,7 +209,7 @@ public class ProductDaoImpl extends BaseDao<Product> implements ProductDao {
                 product.setBuyers(buyers);
             }
         }catch (SQLException e){
-            throw new RuntimeException(e);
+            throw new DaoException("Failed to find product buyers "+e);
         }
         product.setBuyers(buyers);
         optionalProduct=Optional.ofNullable(product);

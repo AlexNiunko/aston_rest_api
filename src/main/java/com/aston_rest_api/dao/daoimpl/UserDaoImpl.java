@@ -3,7 +3,9 @@ package com.aston_rest_api.dao.daoimpl;
 import com.aston_rest_api.dao.BaseDao;
 import com.aston_rest_api.dao.mapper.ResultSetMapper;
 import com.aston_rest_api.dao.mapper.impl.UserResultSetMapperImpl;
+import com.aston_rest_api.db.Configuration;
 import com.aston_rest_api.db.ConnectionManagerImpl;
+import com.aston_rest_api.exception.DaoException;
 import com.aston_rest_api.model.Product;
 import com.aston_rest_api.model.User;
 
@@ -17,45 +19,40 @@ import java.util.Map;
 import java.util.Optional;
 
 public class UserDaoImpl extends BaseDao<User> implements com.aston_rest_api.dao.UserDao {
-    private static final String FIND_USER_BY_LOGIN_AND_PASSWORD =
-            "SELECT * FROM users WHERE u.password=? and u.login=? ";
-    private static final String FIND_ALL_USER_PURCHASES =
+    public static final String FIND_USER_BY_LOGIN_AND_PASSWORD =
+            "SELECT * FROM tool_box.users u WHERE u.password=? and u.login=? ";
+    public static final String FIND_ALL_USER_PURCHASES =
             """
-                    SELECT * FROM users u JOIN sales s 
-                    ON u.user_id=s.buyer_id JOIN products p 
-                    ON s.product_id=p.id_product JOIN product_descriptions pd
+                    SELECT * FROM tool_box.users u JOIN tool_box.sales s 
+                    ON u.user_id=s.buyer_id JOIN tool_box.products p 
+                    ON s.product_id=p.id_product JOIN tool_box.product_descriptions pd
                     ON pd.product_id=p.id_product
                     WHERE u.user_id=?
                     """;
-    private static final String FIND_ALL_USERS =
-            "SELECT * FROM users";
-    private static final String INSERT_USER =
-            """
-                    INSERT INTO users (user_id,login,password,name,surname,users_role) 
-                    VALUES(?,?,?,?,?,?)
-                    """;
-    private static final String DELETE_USER_BY_ID =
-            "DELETE FROM users WHERE user_id=?";
-    private static final String UPDATE_USER =
-            "UPDATE users SET login=?,password=?,name=?,surname=? WHERE user_id=?";
+    public static final String FIND_ALL_USERS =
+            "SELECT * FROM tool_box.users";
+    public static final String INSERT_USER = "INSERT INTO tool_box.users(user_id,login,password,name,surname,users_role) VALUES (?,?,?,?,?,?) ";
+
+    public static final String DELETE_USER_BY_ID =
+            "DELETE FROM tool_box.users WHERE user_id=?";
+    public static final String UPDATE_USER =
+            "UPDATE tool_box.users SET login=?,password=?,name=?,surname=? WHERE user_id=?";
+
+
+    private ResultSetMapper<User,Product> resultSetMapper=UserResultSetMapperImpl.getInstance();
 
     private ConnectionManagerImpl connectionManager;
-    private ResultSetMapper<User,Product> resultSetMapper;
 
-    private static UserDaoImpl instance = new UserDaoImpl();
-
-    private UserDaoImpl() {
-        this.connectionManager = ConnectionManagerImpl.getInstance();
-        this.resultSetMapper = UserResultSetMapperImpl.getInstance();
-    }
-
-    public static UserDaoImpl getInstance() {
-        return instance;
+    public UserDaoImpl(ConnectionManagerImpl connectionManager) {
+        this.connectionManager = connectionManager;
     }
 
     @Override
-    public boolean insert(User user) {
+    public boolean insert(User user) throws DaoException {
         boolean result = false;
+        if (user==null){
+            return result;
+        }
         try (Connection connection = connectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(INSERT_USER)) {
             statement.setLong(1, user.getId());
@@ -66,56 +63,66 @@ public class UserDaoImpl extends BaseDao<User> implements com.aston_rest_api.dao
             statement.setInt(6, user.getUsersRole());
             result = statement.executeUpdate() == 1;
         } catch (SQLException e) {
-
+            throw new DaoException("Failed to insert user "+e);
         }
         return result;
     }
 
     @Override
-    public boolean delete(User user) {
+    public boolean delete(User user) throws DaoException {
         boolean result = false;
+        if (user==null){
+            return result;
+        }
         try (Connection connection = connectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(DELETE_USER_BY_ID)) {
             statement.setLong(1, user.getId());
             result = statement.executeUpdate() == 1;
-        } catch (SQLException e) {
-
+        } catch (SQLException | RuntimeException e) {
+            throw new DaoException("Failed to delete user "+e);
         }
         return result;
     }
 
     @Override
-    public List<User> findAll() {
+    public List<User> findAll() throws DaoException {
         List<User> userList = new ArrayList<>();
         try (Connection connection = connectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(FIND_ALL_USERS)) {
-            ResultSet resultSet = statement.getResultSet();
+            ResultSet resultSet = statement.executeQuery();
             userList = resultSetMapper.mapListItems(resultSet);
-        } catch (SQLException e) {
-
+        } catch (SQLException | RuntimeException e) {
+            throw new DaoException("Failed to select list of uses "+e);
         }
         return userList;
     }
 
     @Override
-    public boolean update(User user) {
+    public boolean update(User user) throws DaoException {
         boolean result = false;
+        if (user==null){
+            return result;
+        }
         try (Connection connection = connectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(UPDATE_USER)) {
             statement.setString(1, user.getLogin());
             statement.setString(2, user.getPassword());
             statement.setString(3, user.getName());
             statement.setString(4, user.getSurname());
+            statement.setLong(5,user.getId());
             result = statement.executeUpdate() == 1;
-        } catch (SQLException e) {
-
+        } catch (SQLException | RuntimeException e) {
+            throw new DaoException("Failed update user "+e);
         }
         return result;
     }
 
     @Override
-    public Optional<User> findUserByLoginAndPassword(User user) {
+    public Optional<User> findUserByLoginAndPassword(User user) throws DaoException {
         Optional<User> optionalUser = Optional.empty();
+        if (user==null){
+            return optionalUser;
+        }
         String login = user.getLogin();
         String password = user.getPassword();
         try (Connection connection = connectionManager.getConnection();
@@ -126,15 +133,18 @@ public class UserDaoImpl extends BaseDao<User> implements com.aston_rest_api.dao
             try (ResultSet resultSet = statement.executeQuery()) {
                 optionalUser = resultSetMapper.mapItem(resultSet);
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | RuntimeException e) {
+            throw new DaoException("Failed to find user ny login and password "+e);
         }
         return optionalUser;
     }
 
     @Override
-    public Optional<User> findUserPurchases(User user) {
+    public Optional<User> findUserPurchases(User user) throws DaoException {
         Optional<User> optionalUser = Optional.empty();
+        if (user==null){
+            return optionalUser;
+        }
         Map<Long, Product> purchases;
         long userId = user.getId();
         try (Connection connection = connectionManager.getConnection();
@@ -144,8 +154,8 @@ public class UserDaoImpl extends BaseDao<User> implements com.aston_rest_api.dao
             try (ResultSet resultSet = statement.executeQuery()) {
                 purchases = resultSetMapper.mapItemEntities(resultSet);
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (SQLException | RuntimeException e) {
+            throw new DaoException("Failed to find user purchases "+e);
         }
         user.setPurchases(purchases);
         optionalUser = Optional.ofNullable(user);

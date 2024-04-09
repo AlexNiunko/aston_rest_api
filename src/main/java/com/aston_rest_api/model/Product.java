@@ -1,6 +1,7 @@
 package com.aston_rest_api.model;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class Product extends AbstractEntity {
      private String productName;
@@ -59,6 +60,19 @@ public class Product extends AbstractEntity {
      }
 
      @Override
+     public boolean equals(Object o) {
+          if (this == o) return true;
+          if (!(o instanceof Product)) return false;
+          Product product = (Product) o;
+          return Double.compare(product.getProductPrice(), getProductPrice()) == 0 && getAmount() == product.getAmount() && getProductName().equals(product.getProductName());
+     }
+
+     @Override
+     public int hashCode() {
+          return Objects.hash(getProductName(), getProductPrice(), getAmount());
+     }
+
+     @Override
      public String toString() {
           final StringBuilder sb = new StringBuilder("ProductDto{");
           sb.append("productName='").append(productName).append('\'');
@@ -81,6 +95,9 @@ public class Product extends AbstractEntity {
 
           public ProductBuilder(long idProduct) {
                this.idProduct = idProduct;
+          }
+          public ProductBuilder() {
+
           }
           public ProductBuilder setProductName(String productName) {
                this.productName = productName;

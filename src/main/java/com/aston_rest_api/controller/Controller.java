@@ -12,7 +12,7 @@ import jakarta.servlet.annotation.*;
 public class Controller extends HttpServlet {
 
     public void init() {
-        ConnectionManagerImpl connectionManager=ConnectionManagerImpl.getInstance();
+
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {

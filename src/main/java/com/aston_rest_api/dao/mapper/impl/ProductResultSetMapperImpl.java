@@ -12,6 +12,7 @@ import com.aston_rest_api.model.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -79,7 +80,7 @@ public class ProductResultSetMapperImpl implements ResultSetMapper<Product,User>
                 .setCountryOfOrigin(resultSet.getString(ProductDescriptionArguments.COUNTRY_OF_ORIGIN))
                 .setType(resultSet.getString(ProductDescriptionArguments.TYPE_OF_PRODUCT))
                 .setBrand(resultSet.getString(ProductDescriptionArguments.BRAND_OF_PRODUCT))
-                .setIssueDate(resultSet.getObject(ProductDescriptionArguments.ISSUE_DATE, LocalDateTime.class))
+                .setIssueDate(resultSet.getObject(ProductDescriptionArguments.ISSUE_DATE, LocalDate.class))
                 .build();
         product.setDescription(description);
         optionalUser = Optional.ofNullable(product);

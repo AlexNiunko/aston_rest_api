@@ -1,6 +1,7 @@
 package com.aston_rest_api.model;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class User extends AbstractEntity {
     private String login;
@@ -19,7 +20,6 @@ public class User extends AbstractEntity {
         this.surname = builder.surname;
         this.usersRole = builder.usersRole;
         this.purchases=builder.purchases;
-
     }
 
     public String getLogin() {
@@ -84,6 +84,19 @@ public class User extends AbstractEntity {
         this.purchases = purchases;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
+        return getUsersRole() == user.getUsersRole() && getLogin().equals(user.getLogin()) && getPassword().equals(user.getPassword()) && getName().equals(user.getName()) && getSurname().equals(user.getSurname());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getLogin(), getPassword(), getName(), getSurname(), getUsersRole());
+    }
+
     public static class UserBuilder {
         private long userId;
         private String login;
@@ -96,6 +109,10 @@ public class User extends AbstractEntity {
         public UserBuilder(long userId) {
             this.userId = userId;
         }
+        public UserBuilder() {
+
+        }
+
 
         public UserBuilder setLogin(String login) {
             this.login = login;

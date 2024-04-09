@@ -11,6 +11,7 @@ import com.aston_rest_api.model.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -35,14 +36,14 @@ public class UserResultSetMapperImpl implements ResultSetMapper<User,Product> {
             product = new Product.ProductBuilder(resultSet.getInt(ProductArguments.ID_PRODUCT))
                     .setProductName(resultSet.getString(ProductArguments.PRODUCT_NAME))
                     .setProductPrice(resultSet.getDouble(ProductArguments.PRODUCT_PRICE))
-                    .setAmount(resultSet.getInt(ProductArguments.AMOUNT_OF_PRODUCT))
+                    .setAmount(resultSet.getInt(SaleArguments.AMOUNT_OF_SALE))
                     .build();
             productDescription = new ProductDescription.ProductDescriptionBuilder(resultSet.getInt(ProductDescriptionArguments.ID_DESCRIPTION))
                     .setProductId(resultSet.getInt(ProductDescriptionArguments.PRODUCT_ID))
                     .setCountryOfOrigin(resultSet.getString(ProductDescriptionArguments.COUNTRY_OF_ORIGIN))
                     .setType(resultSet.getString(ProductDescriptionArguments.TYPE_OF_PRODUCT))
                     .setBrand(resultSet.getString(ProductDescriptionArguments.BRAND_OF_PRODUCT))
-                    .setIssueDate(resultSet.getObject(ProductDescriptionArguments.ISSUE_DATE, LocalDateTime.class))
+                    .setIssueDate(resultSet.getObject(ProductDescriptionArguments.ISSUE_DATE, LocalDate.class))
                     .build();
             product.setDescription(productDescription);
             purchases.put(idSale, product);

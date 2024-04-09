@@ -13,37 +13,22 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ConnectionManagerImpl implements ConnectionManager {
-    private static HikariDataSource dataSource;
+    private HikariDataSource dataSource;
     private static Lock locker = new ReentrantLock();
     private static ConnectionManagerImpl connectionInstance;
     private static AtomicBoolean isInitialized = new AtomicBoolean(false);
-    private static final Properties PROPERTIES=new Properties();
-    private static final String PROPERTIES_PATH="datasource.properties";
 
 
-    private ConnectionManagerImpl() {
-        try(InputStream inputStream=getClass().getClassLoader().getResourceAsStream(PROPERTIES_PATH)){
-            PROPERTIES.load(inputStream);
-            dataSource=new HikariDataSource();
-            dataSource.setDriverClassName(PROPERTIES.getProperty("collectionManagerImpl.db.driver"));
-            dataSource.setJdbcUrl(PROPERTIES.getProperty("collectionManagerImpl.db.url"));
-            dataSource.setUsername(PROPERTIES.getProperty("collectionManagerImpl.user"));
-            dataSource.setPassword(PROPERTIES.getProperty("collectionManagerImpl.password"));
-            dataSource.setMinimumIdle(5);
-            dataSource.setMaximumPoolSize(1000);
-            dataSource.setAutoCommit(true);
-            dataSource.setLoginTimeout(10);
-        }catch (IOException |SQLException e){
-            throw new ExceptionInInitializerError("Failed to read configuration fail"+e);
-        }
+    private ConnectionManagerImpl(HikariDataSource dataSource) {
+        this.dataSource=dataSource;
     }
 
-    public static ConnectionManagerImpl getInstance() {
+    public static ConnectionManagerImpl getInstance(HikariDataSource dataSource) {
         if (!isInitialized.get()) {
             try {
                 locker.lock();
                 if (connectionInstance == null) {
-                    connectionInstance = new ConnectionManagerImpl();
+                    connectionInstance = new ConnectionManagerImpl(dataSource);
                     isInitialized.set(true);
                 }
             } finally {
@@ -52,7 +37,6 @@ public class ConnectionManagerImpl implements ConnectionManager {
         }
         return connectionInstance;
     }
-
 
     @Override
     public Connection getConnection() throws SQLException {

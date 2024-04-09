@@ -1,13 +1,17 @@
 package com.aston_rest_api.dao.mapper.impl;
 
+import com.aston_rest_api.controller.ProductArguments;
+import com.aston_rest_api.controller.ProductDescriptionArguments;
 import com.aston_rest_api.controller.SaleArguments;
 import com.aston_rest_api.dao.mapper.ResultSetMapper;
 import com.aston_rest_api.model.Product;
+import com.aston_rest_api.model.ProductDescription;
 import com.aston_rest_api.model.Sale;
 import com.aston_rest_api.model.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -53,11 +57,23 @@ public class SaleResultSetMapperImpl implements ResultSetMapper<Sale, Product> {
         Optional<Product>optionalProduct=Optional.empty();
         while (resultSet.next()){
             long idSale=resultSet.getLong(SaleArguments.ID_SALE);
-            optionalProduct=productResultSetMapper.mapItem(resultSet);
-            if (optionalProduct.isPresent()){
-                Product product= optionalProduct.get();
-                sales.put(idSale,product);
-            }
+            Product product=new Product.ProductBuilder(resultSet.getLong(ProductArguments.ID_PRODUCT))
+                    .setProductName(resultSet.getString(ProductArguments.PRODUCT_NAME))
+                    .setProductPrice(resultSet.getDouble(ProductArguments.PRODUCT_PRICE))
+                    .setAmount(resultSet.getInt(ProductArguments.AMOUNT_OF_PRODUCT))
+                    .build();
+            ProductDescription description=new ProductDescription.ProductDescriptionBuilder(resultSet.getLong(ProductDescriptionArguments.ID_DESCRIPTION))
+                    .setProductId(resultSet.getLong(ProductDescriptionArguments.PRODUCT_ID))
+                    .setCountryOfOrigin(resultSet.getString(ProductDescriptionArguments.COUNTRY_OF_ORIGIN))
+                    .setType(resultSet.getString(ProductDescriptionArguments.TYPE_OF_PRODUCT))
+                    .setBrand(resultSet.getString(ProductDescriptionArguments.BRAND_OF_PRODUCT))
+                    .setIssueDate(resultSet.getObject(ProductDescriptionArguments.ISSUE_DATE, LocalDate.class))
+                    .build();
+            product.setDescription(description);
+          optionalProduct=Optional.ofNullable(product);
+          if (optionalProduct.isPresent()){
+              sales.put(idSale, optionalProduct.get());
+          }
         }
         return sales;
     }
@@ -65,13 +81,26 @@ public class SaleResultSetMapperImpl implements ResultSetMapper<Sale, Product> {
         Sale sale=new Sale.SaleBuilder(resultSet.getLong(SaleArguments.ID_SALE))
                 .setBuyerId(resultSet.getLong(SaleArguments.BUYER_id))
                 .setProductId(resultSet.getLong(SaleArguments.PRODUCT_ID))
-                .setDateOfSale(resultSet.getObject(SaleArguments.DATE_OF_SALE, LocalDateTime.class))
+                .setDateOfSale(resultSet.getObject(SaleArguments.DATE_OF_SALE, LocalDate.class))
                 .setAmountSale(resultSet.getInt(SaleArguments.AMOUNT_OF_SALE))
                 .build();
-        Optional optionalProduct=productResultSetMapper.mapItem(resultSet);
-        if (optionalProduct.isPresent()){
-            sale.setProductOfSale((Product) optionalProduct.get());
-        }
+        Product product=new Product
+                .ProductBuilder(resultSet.getLong(ProductArguments.ID_PRODUCT))
+                .setProductName(resultSet.getString(ProductArguments.PRODUCT_NAME))
+                .setProductPrice(resultSet.getDouble(ProductArguments.PRODUCT_PRICE))
+                .setAmount(resultSet.getInt(ProductArguments.AMOUNT_OF_PRODUCT))
+                .build();
+        ProductDescription description=new ProductDescription
+                .ProductDescriptionBuilder(resultSet.getLong(ProductDescriptionArguments.ID_DESCRIPTION))
+                .setProductId(resultSet.getLong(ProductDescriptionArguments.PRODUCT_ID))
+                .setCountryOfOrigin(resultSet.getString(ProductDescriptionArguments.COUNTRY_OF_ORIGIN))
+                .setType(resultSet.getString(ProductDescriptionArguments.TYPE_OF_PRODUCT))
+                .setBrand(resultSet.getString(ProductDescriptionArguments.BRAND_OF_PRODUCT))
+                .setIssueDate(resultSet.getObject(ProductDescriptionArguments.ISSUE_DATE, LocalDate.class))
+                .build();
+        product.setDescription(description);
+        sale.setProductOfSale(product);
+
         return Optional.ofNullable(sale);
     }
 
