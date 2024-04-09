@@ -133,8 +133,8 @@ public class UserDaoImpl extends BaseDao<User> implements com.aston_rest_api.dao
             try (ResultSet resultSet = statement.executeQuery()) {
                 optionalUser = resultSetMapper.mapItem(resultSet);
             }
-        } catch (SQLException | RuntimeException e) {
-            throw new DaoException("Failed to find user ny login and password "+e);
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find user  login and password "+e);
         }
         return optionalUser;
     }
