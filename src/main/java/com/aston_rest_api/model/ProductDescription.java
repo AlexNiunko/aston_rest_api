@@ -74,18 +74,18 @@ public class ProductDescription extends AbstractEntity {
         return Objects.hash(getProductID(), getCountryOfOrigin(), getType(), getBrand(), getIssueDate());
     }
 
-//    @Override
-//    public String toString() {
-//        final StringBuilder sb = new StringBuilder("ProductDescriptionDto{");
-//        sb.append("productID=").append(productID);
-//        sb.append(", countryOfOrigin='").append(countryOfOrigin).append('\'');
-//        sb.append(", type='").append(type).append('\'');
-//        sb.append(", brand='").append(brand).append('\'');
-//        sb.append(", issueDate=").append(issueDate);
-//        sb.append(", id=").append(id);
-//        sb.append('}');
-//        return sb.toString();
-//    }
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("ProductDescriptionDto{");
+        sb.append("productID=").append(productID);
+        sb.append(", countryOfOrigin='").append(countryOfOrigin).append('\'');
+        sb.append(", type='").append(type).append('\'');
+        sb.append(", brand='").append(brand).append('\'');
+        sb.append(", issueDate=").append(issueDate);
+        sb.append(", id=").append(id);
+        sb.append('}');
+        return sb.toString();
+    }
 
     public static class ProductDescriptionBuilder {
         private long productDescriptionId;
@@ -106,6 +106,7 @@ public class ProductDescription extends AbstractEntity {
             this.countryOfOrigin = countryOfOrigin;
             return this;
         }
+
         public ProductDescriptionBuilder setType (String type) {
             this.type = type;
             return this;

@@ -1,18 +1,16 @@
 package com.aston_rest_api.dao.mapper.impl;
 
-import com.aston_rest_api.controller.ProductArguments;
-import com.aston_rest_api.controller.ProductDescriptionArguments;
-import com.aston_rest_api.controller.SaleArguments;
+import com.aston_rest_api.controller.arguments.ProductArguments;
+import com.aston_rest_api.controller.arguments.ProductDescriptionArguments;
+import com.aston_rest_api.controller.arguments.SaleArguments;
 import com.aston_rest_api.dao.mapper.ResultSetMapper;
 import com.aston_rest_api.model.Product;
 import com.aston_rest_api.model.ProductDescription;
 import com.aston_rest_api.model.Sale;
-import com.aston_rest_api.model.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 public class SaleResultSetMapperImpl implements ResultSetMapper<Sale, Product> {

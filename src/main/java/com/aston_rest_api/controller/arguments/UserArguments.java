@@ -1,4 +1,4 @@
-package com.aston_rest_api.controller;
+package com.aston_rest_api.controller.arguments;
 
 public class UserArguments {
     public static final String USER_ID="user_id";

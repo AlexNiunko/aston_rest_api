@@ -1,4 +1,4 @@
-package com.aston_rest_api.controller;
+package com.aston_rest_api.controller.arguments;
 
 public class ProductDescriptionArguments {
   public static final String ID_DESCRIPTION="id_description";

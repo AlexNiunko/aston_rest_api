@@ -3,6 +3,7 @@ package com.aston_rest_api.controller;
 import java.io.*;
 import java.util.Enumeration;
 
+import com.aston_rest_api.db.Configuration;
 import com.aston_rest_api.db.ConnectionManagerImpl;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.*;
@@ -12,7 +13,7 @@ import jakarta.servlet.annotation.*;
 public class Controller extends HttpServlet {
 
     public void init() {
-
+        ConnectionManagerImpl.getInstance(Configuration.dataSource);
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {

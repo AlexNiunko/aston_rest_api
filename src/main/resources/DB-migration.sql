@@ -2,7 +2,7 @@ CREATE SCHEMA tool_box
     AUTHORIZATION postgres;
 create table tool_box.users
 (
-    user_id    integer  not null
+    user_id    bigint  not null
         primary key
         unique,
     login      varchar(50)                                                     not null
@@ -18,7 +18,7 @@ alter table tool_box.users
     owner to postgres;
 CREATE TABLE tool_box.products
 (
-    id_product integer NOT NULL ,
+    id_product bigint NOT NULL ,
     product_name character varying(50) COLLATE pg_catalog."default" NOT NULL,
     product_price numeric,
     amount_of_product integer,
@@ -34,7 +34,7 @@ ALTER TABLE tool_box.products
     OWNER to postgres;
 create table tool_box.product_descriptions
 (
-    id_description    integer not null
+    id_description    bigint not null
         primary key
         constraint product_descriptions_id_descriptions_key
             unique,
@@ -53,13 +53,13 @@ alter table tool_box.product_descriptions
 
 create table tool_box.sales
 (
-    id_sale        serial
+    id_sale        bigint
         primary key
         unique,
-    buyer_id       integer
+    buyer_id       bigint
         constraint sales_users_user_id_fk
             references tool_box.users on delete set null ,
-    product_id     integer
+    product_id     bigint
         constraint sales_products_id_product_fk
             references tool_box.products
             on update set null
