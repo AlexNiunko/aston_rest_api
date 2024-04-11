@@ -2,7 +2,7 @@ package com.aston_rest_api.command;
 
 public class Pages {
     public static final String USER_PAGE="user_page.jsp";
-    public static final String INDEX_PAGE="index.jsp";
+    public static final String INDEX_PAGE="pageContext.request.contextPath/index.jsp";
     public static final String PURCHASES_PAGE="purchases_page.jsp";
     public static final String UPDATE_PROFILE_PAGE="update_profile_page.jsp";
     public static final String ADD_NEW_PRODUCT="add_new_product_page.jsp";

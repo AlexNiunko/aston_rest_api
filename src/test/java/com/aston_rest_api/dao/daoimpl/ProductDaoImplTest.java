@@ -74,7 +74,7 @@ class ProductDaoImplTest {
     void successfulFindProductBuyers() throws DaoException {
         User user = new User.UserBuilder(1)
                 .setLogin("michai@gmail.com")
-                .setPassword("123")
+                .setPassword("asrg346")
                 .setName("Michail")
                 .setSurname("Radzivil")
                 .setUsersRole(1)

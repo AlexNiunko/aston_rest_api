@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserResultSetMapperImplTest {
     private static User user=new User.UserBuilder(1)
             .setLogin("michai@gmail.com")
-            .setPassword("123")
+            .setPassword("asrg346")
             .setName("Michail")
             .setSurname("Radzivil")
             .setUsersRole(1)

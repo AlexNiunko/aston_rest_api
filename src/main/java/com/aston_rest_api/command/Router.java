@@ -1,7 +1,7 @@
 package com.aston_rest_api.command;
 
 public class Router {
-    private String page = "PagePath.INDEX";
+    private String page = Pages.INDEX_PAGE;
     private Type type = Type.FORWARD;
 
     public enum Type {
