@@ -43,9 +43,6 @@ public class ParameterValidator {
         Pattern pattern = Pattern.compile(ParameterPattern.NAME_PATTERN);
         Matcher matcher = pattern.matcher(input);
         match = matcher.matches();
-        if (match){
-            System.out.println("valid name");
-        }
         return match;
     }
 
@@ -54,10 +51,6 @@ public class ParameterValidator {
         Pattern pattern = Pattern.compile(ParameterPattern.PASSWORD_PATTERN);
         Matcher matcher = pattern.matcher(input);
         match = matcher.matches();
-        if (match){
-            System.out.println("valid pass");
-        }
-
         return match;
     }
 
@@ -66,9 +59,6 @@ public class ParameterValidator {
         Pattern pattern = Pattern.compile(ParameterPattern.EMAIL_PATTERN);
         Matcher matcher = pattern.matcher(input);
         match=matcher.matches();
-        if (match){
-            System.out.println("valid email");
-        }
         return match;
     }
 }

@@ -38,7 +38,7 @@ create table tool_box.product_descriptions
         primary key
         constraint product_descriptions_id_descriptions_key
             unique,
-    product_id        integer                                                                                not null
+    product_id        bigint                                                                               not null
         constraint product_descriptions_products_id_product_fk
             references tool_box.products on delete cascade
         ,
@@ -73,7 +73,7 @@ alter table tool_box.sales
 
 INSERT INTO tool_box.users
 (user_id, login, password, name, surname, users_role) VALUES
-(1,'michai@gmail.com','123','Michail','Radzivil',1),
+(1,'michai@gmail.com','asrg346','Michail','Radzivil',1),
 (22,'stefan@tut.by','12345','Stefan','Batoyi',1),
 (33,'stanslau@mail.ru','12459','Stanislau','Poniatovskiy',1)
 ;

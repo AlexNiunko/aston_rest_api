@@ -4,25 +4,24 @@ import com.aston_rest_api.command.Attributes;
 import com.aston_rest_api.command.Pages;
 import com.aston_rest_api.command.Router;
 import com.aston_rest_api.controller.arguments.UserArguments;
+import com.aston_rest_api.controller.dto.ProductDto;
 import com.aston_rest_api.controller.dto.UserDto;
 import com.aston_rest_api.exception.CommandException;
 import com.aston_rest_api.model.User;
-import com.aston_rest_api.service.UserService;
-import com.aston_rest_api.service.impl.UserServiceImpl;
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-class LoginCommandTest {
-    private static LoginCommand command;
+import static org.junit.jupiter.api.Assertions.*;
+class ShowUserPurchasesTest {
+    private static ShowUserPurchases command;
     private static HikariDataSource dataSource = new HikariDataSource();
     private static PostgreSQLContainer container = (PostgreSQLContainer) new PostgreSQLContainer("postgres:10-alpine")
             .withUsername("postgres")
@@ -44,15 +43,14 @@ class LoginCommandTest {
         dataSource.setMaximumPoolSize(1000);
         dataSource.setAutoCommit(true);
         dataSource.setLoginTimeout(10);
-        command = new LoginCommand(dataSource);
+        command = new ShowUserPurchases(dataSource);
     }
 
-    private UserDto userDto = new UserDto.UserDtoBuilder(1)
+    private UserDto userDto=new UserDto.UserDtoBuilder(1)
             .setLogin("michai@gmail.com")
-            .setPassword("123")
+            .setPassword("asrg346")
             .setName("Michail")
             .setSurname("Radzivil")
-            .setIsAdmin(1)
             .build();
 
     @BeforeEach
@@ -62,32 +60,12 @@ class LoginCommandTest {
     }
 
     @Test
-    void shouldSuccessfullLogin() throws CommandException {
-        Mockito.doReturn("michai@gmail.com").when(request).getParameter(UserArguments.LOGIN);
-        Mockito.doReturn("asrg346").when(request).getParameter(UserArguments.PASSWORD);
+    void shouldSuccessFindPurchases() throws CommandException {
+        List<ProductDto>purchases=new ArrayList<>();
         Mockito.doReturn(session).when(request).getSession();
-        Mockito.doNothing().when(session).setAttribute(Attributes.USER, userDto);
+        Mockito.doReturn(userDto).when(session).getAttribute(Attributes.USER);
+        Mockito.doNothing().when(session).setAttribute(Attributes.USER_PURCHASES,purchases);
         Router router = command.execute(request);
-        Assertions.assertEquals(Pages.USER_PAGE, router.getPage());
-    }
-
-    @Test
-    void shouldUnuccessfulLogin() throws CommandException {
-        Mockito.doReturn("michai@gmail.com").when(request).getParameter(UserArguments.LOGIN);
-        Mockito.doReturn("asrg346fr").when(request).getParameter(UserArguments.PASSWORD);
-        Mockito.doReturn(session).when(request).getSession();
-        Mockito.doNothing().when(session).setAttribute(Attributes.USER, userDto);
-        Router router = command.execute(request);
-        Assertions.assertEquals(Pages.INDEX_PAGE, router.getPage());
-    }
-
-    @Test
-    void shouldInvalidDataLogin() throws CommandException {
-        Mockito.doReturn("com").when(request).getParameter(UserArguments.LOGIN);
-        Mockito.doReturn("asrg346fr").when(request).getParameter(UserArguments.PASSWORD);
-        Mockito.doReturn(session).when(request).getSession();
-        Mockito.doNothing().when(session).setAttribute(Attributes.USER, userDto);
-        Router router = command.execute(request);
-        Assertions.assertEquals(Pages.INDEX_PAGE, router.getPage());
+        Assertions.assertEquals(Pages.PURCHASES_PAGE,router.getPage());
     }
 }

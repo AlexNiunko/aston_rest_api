@@ -14,14 +14,17 @@ import com.aston_rest_api.model.User;
 import com.aston_rest_api.service.UserService;
 import com.aston_rest_api.service.impl.UserServiceImpl;
 import com.aston_rest_api.validator.ParameterValidator;
+import com.zaxxer.hikari.HikariDataSource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 import java.util.*;
 
-public class LoginCommand implements Command {
+public class LoginCommand  implements Command {
+    private HikariDataSource config;
 
-    public LoginCommand() {
+    public LoginCommand(HikariDataSource dataSource) {
+        this.config=dataSource;
     }
 
     @Override
@@ -29,7 +32,7 @@ public class LoginCommand implements Command {
         Router router=new Router();
         ParameterValidator validator=ParameterValidator.getInstance();
         UserMapper mapper= UserMapperImpl.getMapper();
-        UserDaoImpl userDao=new UserDaoImpl(ConnectionManagerImpl.getInstance(Configuration.dataSource));
+        UserDaoImpl userDao=new UserDaoImpl(ConnectionManagerImpl.getInstance(config));
         UserService userService= new UserServiceImpl(userDao);
         String login=request.getParameter(UserArguments.LOGIN);
         String password=request.getParameter(UserArguments.PASSWORD);

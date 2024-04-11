@@ -34,7 +34,7 @@ class UserDaoImplTest {
     private static List<User> userList = new ArrayList<>();
 
     static {
-        User user1 = new User.UserBuilder(1).setLogin("michai@gmail.com").setPassword("123").setName("Michail").setSurname("Radzivil").setUsersRole(1).build();
+        User user1 = new User.UserBuilder(1).setLogin("michai@gmail.com").setPassword("asrg346").setName("Michail").setSurname("Radzivil").setUsersRole(1).build();
         User user2 = new User.UserBuilder(22).setLogin("stefan@tut.by").setPassword("12345").setName("Stefan").setSurname("Batoyi").setUsersRole(1).build();
         User user3 = new User.UserBuilder(33).setLogin("stanslau@mail.ru").setPassword("12459").setName("Stanislau").setSurname("Poniatovskiy").setUsersRole(1).build();
         userList.add(user1);
@@ -115,7 +115,7 @@ class UserDaoImplTest {
     void successfulFindUserByLoginAndPassword() throws DaoException {
         user = new User.UserBuilder()
                 .setLogin("michai@gmail.com")
-                .setPassword("123")
+                .setPassword("asrg346")
                 .build();
         Assertions.assertTrue(userDao.findUserByLoginAndPassword(user).isPresent());
     }

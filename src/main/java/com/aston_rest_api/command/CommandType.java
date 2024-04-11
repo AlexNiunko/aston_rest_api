@@ -22,7 +22,6 @@ public enum CommandType {
     }
 
     public static Command defineCommand(String commandStr) {
-
         CommandType currentCommand;
         Optional<CommandType> ifExist = Arrays.stream(CommandType.values())
                 .filter(s -> s == CommandType.valueOf(commandStr))

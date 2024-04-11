@@ -14,20 +14,24 @@ import com.aston_rest_api.model.User;
 import com.aston_rest_api.service.UserService;
 import com.aston_rest_api.service.impl.UserServiceImpl;
 import com.aston_rest_api.validator.ParameterValidator;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 import javax.xml.validation.Validator;
 import java.util.UUID;
 
-public class AddNewUserCommand implements Command {
-    public AddNewUserCommand() {
+public class AddNewUserCommand  implements Command {
+    private HikariDataSource config;
+    public AddNewUserCommand(HikariDataSource config) {
+        this.config=config;
     }
 
     @Override
     public Router execute(HttpServletRequest request) throws CommandException {
         Router router=new Router();
-        UserDaoImpl userDao=new UserDaoImpl(ConnectionManagerImpl.getInstance(Configuration.dataSource));
+        UserDaoImpl userDao=new UserDaoImpl(ConnectionManagerImpl.getInstance(config));
         UserService userService=new UserServiceImpl(userDao);
         HttpSession session= request.getSession();
         ParameterValidator validator=ParameterValidator.getInstance();
@@ -41,7 +45,6 @@ public class AddNewUserCommand implements Command {
         int role=1;
         if ( validator.validateEmail(email) && validator.validatePassword(password)
                 && validator.validateNameOrSurname(name) && validator.validateNameOrSurname(surname) ){
-            System.out.println("Valid");
             UserDto userDto=new UserDto.UserDtoBuilder(idDtoUser)
                     .setLogin(email)
                     .setPassword(password)
@@ -61,7 +64,6 @@ public class AddNewUserCommand implements Command {
                 throw new CommandException(e);
             }
         }else {
-            System.out.println("Else");
             router.setPage(Pages.INDEX_PAGE);
         }
         return router;
