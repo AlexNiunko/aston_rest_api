@@ -20,6 +20,14 @@ public class Sale extends AbstractEntity {
         this.productOfSale= builder.productOfSale;
     }
 
+    public LocalDate getDateOfSale() {
+        return dateOfSale;
+    }
+
+    public void setDateOfSale(LocalDate dateOfSale) {
+        this.dateOfSale = dateOfSale;
+    }
+
     public static class SaleBuilder {
         private long idSale;
         private long buyerId;
