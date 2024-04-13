@@ -6,16 +6,15 @@ import com.aston_rest_api.command.Attributes;
 import com.aston_rest_api.command.Command;
 import com.aston_rest_api.command.CommandType;
 import com.aston_rest_api.command.Router;
-import com.aston_rest_api.db.Configuration;
-import com.aston_rest_api.db.ConnectionManagerImpl;
 import com.aston_rest_api.exception.CommandException;
+import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 
 @WebServlet(name = "controller", urlPatterns = "/controller")
 public class Controller extends HttpServlet {
-    public Controller() {
+    public Controller(ServletConfig config) {
     }
 
 

@@ -3,6 +3,8 @@ package com.aston_rest_api.controller;
 import com.aston_rest_api.command.Attributes;
 import com.aston_rest_api.command.Pages;
 import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.util.Enumeration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,13 +25,34 @@ class ControllerTest {
     private HttpServletResponse response;
     private Controller controller;
     private RequestDispatcher dispatcher;
+    ServletConfig config=new ServletConfig() {
+        @Override
+        public String getServletName() {
+            return null;
+        }
+
+        @Override
+        public ServletContext getServletContext() {
+            return null;
+        }
+
+        @Override
+        public String getInitParameter(String s) {
+            return null;
+        }
+
+        @Override
+        public Enumeration<String> getInitParameterNames() {
+            return null;
+        }
+    };
 
     @BeforeEach
     void prepare(){
         request=Mockito.mock(HttpServletRequest.class);
         response=Mockito.mock(HttpServletResponse.class);
         dispatcher=Mockito.mock(RequestDispatcher.class);
-        controller=new Controller();
+        controller=new Controller(config);
 
     }
     @Test
