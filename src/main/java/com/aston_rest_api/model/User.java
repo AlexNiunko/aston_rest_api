@@ -1,5 +1,6 @@
 package com.aston_rest_api.model;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -10,7 +11,7 @@ public class User extends AbstractEntity {
     private String surname;
     private int usersRole;
 
-    private Map<Long, Product> purchases;
+    private List<Product>purchases;
 
     private User(UserBuilder builder) {
         super(builder.userId);
@@ -62,25 +63,11 @@ public class User extends AbstractEntity {
         this.usersRole = usersRole;
     }
 
-    public Map<Long, Product> getPurchases() {
+    public List<Product> getPurchases() {
         return purchases;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("UserDto{");
-        sb.append("login='").append(login).append('\'');
-        sb.append(", password='").append(password).append('\'');
-        sb.append(", name='").append(name).append('\'');
-        sb.append(", surname='").append(surname).append('\'');
-        sb.append(", usersRole=").append(usersRole);
-        sb.append(", purchases=").append(purchases);
-        sb.append(", id=").append(id);
-        sb.append('}');
-        return sb.toString();
-    }
-
-    public void setPurchases(Map<Long, Product> purchases) {
+    public void setPurchases(List<Product> purchases) {
         this.purchases = purchases;
     }
 
@@ -97,6 +84,20 @@ public class User extends AbstractEntity {
         return Objects.hash(getLogin(), getPassword(), getName(), getSurname(), getUsersRole());
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("User{");
+        sb.append("login='").append(login).append('\'');
+        sb.append(", password='").append(password).append('\'');
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", surname='").append(surname).append('\'');
+        sb.append(", usersRole=").append(usersRole);
+        sb.append(", purchases=").append(purchases);
+        sb.append(", id=").append(id);
+        sb.append('}');
+        return sb.toString();
+    }
+
     public static class UserBuilder {
         private long userId;
         private String login;
@@ -104,7 +105,7 @@ public class User extends AbstractEntity {
         private String name;
         private String surname;
         private int usersRole;
-        private Map<Long, Product> purchases;
+        private List<Product>purchases;
 
         public UserBuilder(long userId) {
             this.userId = userId;
@@ -138,7 +139,7 @@ public class User extends AbstractEntity {
             this.usersRole = role;
             return this;
         }
-        public UserBuilder setPurchases(Map<Long, Product>purchases) {
+        public UserBuilder setPurchases(List<Product>purchases) {
             this.purchases = purchases;
             return this;
         }

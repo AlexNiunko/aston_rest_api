@@ -1,6 +1,7 @@
 package com.aston_rest_api.dao.daoimpl;
 
 import com.aston_rest_api.dao.BaseDao;
+import com.aston_rest_api.dao.mapper.ListResultSetMapper;
 import com.aston_rest_api.dao.mapper.ResultSetMapper;
 import com.aston_rest_api.dao.mapper.impl.UserResultSetMapperImpl;
 import com.aston_rest_api.db.Configuration;
@@ -23,9 +24,12 @@ public class UserDaoImpl extends BaseDao<User> implements com.aston_rest_api.dao
             "SELECT * FROM tool_box.users u WHERE u.password=? and u.login=? ";
     public static final String FIND_ALL_USER_PURCHASES =
             """
-                    SELECT * FROM tool_box.users u JOIN tool_box.sales s 
-                    ON u.user_id=s.buyer_id JOIN tool_box.products p 
-                    ON s.product_id=p.id_product JOIN tool_box.product_descriptions pd
+                    SELECT * FROM tool_box.users u 
+                    JOIN tool_box.sales s 
+                    ON u.user_id=s.buyer_id 
+                    JOIN tool_box.products p 
+                    ON s.product_id=p.id_product 
+                    JOIN tool_box.product_descriptions pd
                     ON pd.product_id=p.id_product
                     WHERE u.user_id=?
                     """;
@@ -39,7 +43,7 @@ public class UserDaoImpl extends BaseDao<User> implements com.aston_rest_api.dao
             "UPDATE tool_box.users SET login=?,password=?,name=?,surname=? WHERE user_id=?";
 
 
-    private ResultSetMapper<User,Product> resultSetMapper=UserResultSetMapperImpl.getInstance();
+    private ResultSetMapper<User> resultSetMapper=UserResultSetMapperImpl.getInstance();
 
     private ConnectionManagerImpl connectionManager;
 
@@ -145,14 +149,16 @@ public class UserDaoImpl extends BaseDao<User> implements com.aston_rest_api.dao
         if (user==null){
             return optionalUser;
         }
-        Map<Long, Product> purchases;
+        List<Product> purchases;
         long userId = user.getId();
+        ListResultSetMapper<Product>listResultSetMapper=(ListResultSetMapper)resultSetMapper;
         try (Connection connection = connectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(FIND_ALL_USER_PURCHASES);
         ) {
             statement.setLong(1, userId);
             try (ResultSet resultSet = statement.executeQuery()) {
-                purchases = resultSetMapper.mapItemEntities(resultSet);
+
+                purchases = listResultSetMapper.mapItemEntities(resultSet);
             }
         } catch (SQLException | RuntimeException e) {
             throw new DaoException("Failed to find user purchases "+e);

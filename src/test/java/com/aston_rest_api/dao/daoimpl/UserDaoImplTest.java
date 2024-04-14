@@ -82,7 +82,7 @@ class UserDaoImplTest {
     @Test
     @Order(1)
     void successfulFindUserPurchases() throws DaoException {
-        HashMap<Long, Product> purchases = new HashMap<>();
+        List<Product> purchases = new ArrayList<>();
         Product item = new Product.ProductBuilder(1).setProductName("hammer").setProductPrice(10.25).setAmount(1).build();
         ProductDescription itemDescription = new ProductDescription.ProductDescriptionBuilder(1)
                 .setProductId(1)
@@ -90,8 +90,8 @@ class UserDaoImplTest {
                 .setIssueDate(LocalDate.of(2024, 2, 9))
                 .build();
         item.setDescription(itemDescription);
-        purchases.put(1L, item);
-        purchases.put(2L, item);
+        purchases.add(item);
+        purchases.add(item);
         user=new User.UserBuilder(1)
                 .setLogin("michai@gmail.com")
                 .setPassword("123")

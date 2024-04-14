@@ -133,23 +133,23 @@ class UserServiceImplTest {
 
     @Test
     void shouldSelectUserPurchases() throws DaoException, ServiceException {
-        HashMap<Long, Product> map=new HashMap<>();
+        List<Product>purchases=new ArrayList<>();
         Product product=new Product.ProductBuilder(1).build();
-        map.put(1L,product);
-        user.setPurchases(map);
+        purchases.add(product);
+        user.setPurchases(purchases);
         Optional<User>optionalUser=Optional.of(user);
         Mockito.doReturn(optionalUser).when(userDao).findUserPurchases(user);
-        Assertions.assertEquals(map,userService.selectUserPurchases(user));
+        Assertions.assertEquals(purchases,userService.selectUserPurchases(user));
     }
     @Test
     void shouldNotSelectUserPurchases() throws DaoException, ServiceException {
-        HashMap<Long, Product> map=new HashMap<>();
+        List<Product> list=new ArrayList<>();
         Product product=new Product.ProductBuilder(1).build();
-        map.put(1L,product);
-        user.setPurchases(map);
+        list.add(product);
+        user.setPurchases(list);
         Optional<User>optionalUser=Optional.empty();
         Mockito.doReturn(optionalUser).when(userDao).findUserPurchases(null);
-        Assertions.assertNotEquals(map,userService.selectUserPurchases(null));
+        Assertions.assertNotEquals(list,userService.selectUserPurchases(null));
     }
     @Test
     void throwSelectUserPurchases() throws DaoException, ServiceException {

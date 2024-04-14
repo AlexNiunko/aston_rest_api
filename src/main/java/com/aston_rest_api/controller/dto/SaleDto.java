@@ -9,7 +9,6 @@ public class SaleDto {
     private long buyerId;
     private long productId;
     private String dateOfSale;
-    private ProductDto productDto;
     private String amountOfSale;
 
     public long getSaleId() {
@@ -44,14 +43,6 @@ public class SaleDto {
         this.dateOfSale = dateOfSale;
     }
 
-    public ProductDto getProductDto() {
-        return productDto;
-    }
-
-    public void setProductDto(ProductDto productDto) {
-        this.productDto = productDto;
-    }
-
     public String getAmountOfSale() {
         return amountOfSale;
     }
@@ -65,7 +56,6 @@ public class SaleDto {
         this.buyerId = saleDtoBuilder.buyerId;
         this.productId = saleDtoBuilder.productId;
         this.dateOfSale = saleDtoBuilder.dateOfSale;
-        this.productDto = saleDtoBuilder.productDto;
         this.amountOfSale = saleDtoBuilder.amountOfSale;
     }
 
@@ -74,12 +64,12 @@ public class SaleDto {
         if (this == o) return true;
         if (!(o instanceof SaleDto)) return false;
         SaleDto saleDto = (SaleDto) o;
-        return getSaleId() == saleDto.getSaleId() && getBuyerId() == saleDto.getBuyerId() && getProductId() == saleDto.getProductId() && getDateOfSale().equals(saleDto.getDateOfSale()) && getProductDto().equals(saleDto.getProductDto()) && getAmountOfSale().equals(saleDto.getAmountOfSale());
+        return getSaleId() == saleDto.getSaleId() && getBuyerId() == saleDto.getBuyerId() && getProductId() == saleDto.getProductId() && getDateOfSale().equals(saleDto.getDateOfSale()) && getAmountOfSale().equals(saleDto.getAmountOfSale());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getSaleId(), getBuyerId(), getProductId(), getDateOfSale(), getProductDto(), getAmountOfSale());
+        return Objects.hash(getSaleId(), getBuyerId(), getProductId(), getDateOfSale(), getAmountOfSale());
     }
 
     @Override
@@ -89,7 +79,6 @@ public class SaleDto {
         sb.append(", buyerId=").append(buyerId);
         sb.append(", productId=").append(productId);
         sb.append(", dateOfSale='").append(dateOfSale).append('\'');
-        sb.append(", productDto=").append(productDto);
         sb.append(", amountOfSale='").append(amountOfSale).append('\'');
         sb.append('}');
         return sb.toString();
@@ -100,7 +89,6 @@ public class SaleDto {
         private long buyerId;
         private long productId;
         private String dateOfSale;
-        private ProductDto productDto;
         private String amountOfSale;
 
         public SaleDtoBuilder(long saleId) {
@@ -122,10 +110,6 @@ public class SaleDto {
             return this;
         }
 
-        public SaleDtoBuilder setProductDto(ProductDto productDto) {
-            this.productDto = productDto;
-            return this;
-        }
 
         public SaleDtoBuilder setAmountOfSale(String amountOfSale) {
             this.amountOfSale = amountOfSale;

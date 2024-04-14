@@ -52,7 +52,7 @@ public class BuyProductCommand implements Command {
         User user= userMapper.map(userDto);
         Product product=new Product.ProductBuilder(idProduct).build();
         try{
-            Optional<Product>optionalProduct=productService.findProductBuId(product);
+            Optional<Product>optionalProduct=productService.findProductBuId(product.getId());
             if (optionalProduct.isPresent() && validator.validateNumber(amountOfSale)){
                 LocalDate dateOfSale=LocalDate.now();
                 long idSale= UUID.randomUUID().getLeastSignificantBits();
@@ -60,7 +60,6 @@ public class BuyProductCommand implements Command {
                         .setProductId(optionalProduct.get().getId())
                         .setBuyerId(user.getId())
                         .setDateOfSale(dateOfSale)
-                        .setProductOfSale(optionalProduct.get())
                         .setAmountSale(Integer.parseInt(amountOfSale))
                         .build();
                         if (saleService.buyProduct(sale)){

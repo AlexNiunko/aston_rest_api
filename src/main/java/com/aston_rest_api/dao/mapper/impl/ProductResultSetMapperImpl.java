@@ -4,6 +4,7 @@ import com.aston_rest_api.controller.arguments.ProductArguments;
 import com.aston_rest_api.controller.arguments.ProductDescriptionArguments;
 import com.aston_rest_api.controller.arguments.SaleArguments;
 import com.aston_rest_api.controller.arguments.UserArguments;
+import com.aston_rest_api.dao.mapper.ListResultSetMapper;
 import com.aston_rest_api.dao.mapper.ResultSetMapper;
 import com.aston_rest_api.model.Product;
 import com.aston_rest_api.model.ProductDescription;
@@ -14,7 +15,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 
-public class ProductResultSetMapperImpl implements ResultSetMapper<Product,User> {
+public class ProductResultSetMapperImpl implements ResultSetMapper<Product>, ListResultSetMapper<User> {
     private static ProductResultSetMapperImpl instance=new ProductResultSetMapperImpl();
 
     private ProductResultSetMapperImpl() {
@@ -28,7 +29,7 @@ public class ProductResultSetMapperImpl implements ResultSetMapper<Product,User>
     @Override
     public Optional<Product> mapItem(ResultSet resultSet) throws SQLException {
         Optional<Product> optionalProduct=Optional.empty();
-        Map<Long,User>buyers=new HashMap<>();
+        List<User>buyers=new ArrayList<>();
         if (resultSet.next()) {
             optionalProduct=getOptionalProduct(resultSet,buyers);
         }
@@ -39,7 +40,7 @@ public class ProductResultSetMapperImpl implements ResultSetMapper<Product,User>
     public List<Product> mapListItems(ResultSet resultSet) throws SQLException {
         List<Product>productList=new ArrayList<>();
         Optional<Product>optionalProduct=Optional.empty();
-        Map<Long,User>buyers=new HashMap<>();
+        List<User>buyers=new ArrayList<>();
         while (resultSet.next()){
             optionalProduct=getOptionalProduct(resultSet,buyers);
             optionalProduct.ifPresent(productList::add);
@@ -48,11 +49,10 @@ public class ProductResultSetMapperImpl implements ResultSetMapper<Product,User>
     }
 
     @Override
-    public Map<Long, User> mapItemEntities(ResultSet resultSet) throws SQLException {
-        Map<Long,User>buyers=new HashMap<>();
+    public List<User> mapItemEntities(ResultSet resultSet) throws SQLException {
+        List<User>buyers=new ArrayList<>();
         User user;
         while (resultSet.next()){
-            long idSale=resultSet.getInt(SaleArguments.ID_SALE);
             user=new User.UserBuilder(resultSet.getLong(UserArguments.USER_ID))
                     .setLogin(resultSet.getString(UserArguments.LOGIN))
                     .setPassword(resultSet.getString(UserArguments.PASSWORD))
@@ -60,12 +60,15 @@ public class ProductResultSetMapperImpl implements ResultSetMapper<Product,User>
                     .setSurname(resultSet.getString(UserArguments.SURNAME))
                     .setUsersRole(resultSet.getInt(UserArguments.USERS_ROLE))
                     .build();
-            buyers.put(idSale,user);
+            buyers.add(user);
         }
         return buyers;
     }
 
-    private  Optional<Product> getOptionalProduct(ResultSet resultSet, Map<Long, User> buyers) throws SQLException {
+
+
+
+    private  Optional<Product> getOptionalProduct(ResultSet resultSet, List<User> buyers) throws SQLException {
         Optional<Product> optionalUser;
         Product product=new Product.ProductBuilder(resultSet.getLong(ProductArguments.ID_PRODUCT))
                 .setProductName(resultSet.getString(ProductArguments.PRODUCT_NAME))

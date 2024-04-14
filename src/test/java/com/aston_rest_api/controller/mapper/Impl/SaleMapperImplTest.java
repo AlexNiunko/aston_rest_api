@@ -60,8 +60,6 @@ class SaleMapperImplTest {
     static void init(){
         product.setDescription(description);
         productDto.setDescription(productDescriptionDto);
-        sale.setProductOfSale(product);
-        saleDto.setProductDto(productDto);
     }
 
     @Test

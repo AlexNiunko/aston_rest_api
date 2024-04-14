@@ -63,7 +63,7 @@ class SaleServiceImplTest {
     void shouldBuyProduct() throws DaoException, ServiceException {
         product.setDescription(description);
         Optional<Product>productOptional=Optional.of(product);
-        Mockito.doReturn(productOptional).when(productDao).findProductById(sale.getProductOfSale());
+        Mockito.doReturn(productOptional).when(productDao).findProductById(sale.getProductId());
         Mockito.doReturn(true).when(saleDao).insert(sale);
         Assertions.assertTrue(saleService.buyProduct(sale));
     }
@@ -75,7 +75,7 @@ class SaleServiceImplTest {
     @Test
     void shouldBuyProductThrow() throws DaoException, ServiceException {
         Mockito.doThrow(DaoException.class).when(saleDao).insert(sale);
-        Mockito.doThrow(DaoException.class).when(productDao).findProductById(sale.getProductOfSale());
+        Mockito.doThrow(DaoException.class).when(productDao).findProductById(sale.getId());
         Assertions.assertThrows(ServiceException.class,()->saleService.buyProduct(sale));
     }
     @Test

@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 
-public class SaleResultSetMapperImpl implements ResultSetMapper<Sale, Product> {
+public class SaleResultSetMapperImpl implements ResultSetMapper<Sale> {
 
 
     private static ResultSetMapper instance=new SaleResultSetMapperImpl();
@@ -49,32 +49,6 @@ public class SaleResultSetMapperImpl implements ResultSetMapper<Sale, Product> {
         return saleList;
     }
 
-    @Override
-    public Map<Long, Product> mapItemEntities(ResultSet resultSet) throws SQLException {
-        Map<Long,Product>sales=new HashMap<>();
-        Optional<Product>optionalProduct=Optional.empty();
-        while (resultSet.next()){
-            long idSale=resultSet.getLong(SaleArguments.ID_SALE);
-            Product product=new Product.ProductBuilder(resultSet.getLong(ProductArguments.ID_PRODUCT))
-                    .setProductName(resultSet.getString(ProductArguments.PRODUCT_NAME))
-                    .setProductPrice(resultSet.getDouble(ProductArguments.PRODUCT_PRICE))
-                    .setAmount(resultSet.getInt(ProductArguments.AMOUNT_OF_PRODUCT))
-                    .build();
-            ProductDescription description=new ProductDescription.ProductDescriptionBuilder(resultSet.getLong(ProductDescriptionArguments.ID_DESCRIPTION))
-                    .setProductId(resultSet.getLong(ProductDescriptionArguments.PRODUCT_ID))
-                    .setCountryOfOrigin(resultSet.getString(ProductDescriptionArguments.COUNTRY_OF_ORIGIN))
-                    .setType(resultSet.getString(ProductDescriptionArguments.TYPE_OF_PRODUCT))
-                    .setBrand(resultSet.getString(ProductDescriptionArguments.BRAND_OF_PRODUCT))
-                    .setIssueDate(resultSet.getObject(ProductDescriptionArguments.ISSUE_DATE, LocalDate.class))
-                    .build();
-            product.setDescription(description);
-          optionalProduct=Optional.ofNullable(product);
-          if (optionalProduct.isPresent()){
-              sales.put(idSale, optionalProduct.get());
-          }
-        }
-        return sales;
-    }
     private Optional<Sale> getOptionalSale(ResultSet resultSet) throws SQLException {
         Sale sale=new Sale.SaleBuilder(resultSet.getLong(SaleArguments.ID_SALE))
                 .setBuyerId(resultSet.getLong(SaleArguments.BUYER_id))
@@ -82,23 +56,6 @@ public class SaleResultSetMapperImpl implements ResultSetMapper<Sale, Product> {
                 .setDateOfSale(resultSet.getObject(SaleArguments.DATE_OF_SALE, LocalDate.class))
                 .setAmountSale(resultSet.getInt(SaleArguments.AMOUNT_OF_SALE))
                 .build();
-        Product product=new Product
-                .ProductBuilder(resultSet.getLong(ProductArguments.ID_PRODUCT))
-                .setProductName(resultSet.getString(ProductArguments.PRODUCT_NAME))
-                .setProductPrice(resultSet.getDouble(ProductArguments.PRODUCT_PRICE))
-                .setAmount(resultSet.getInt(ProductArguments.AMOUNT_OF_PRODUCT))
-                .build();
-        ProductDescription description=new ProductDescription
-                .ProductDescriptionBuilder(resultSet.getLong(ProductDescriptionArguments.ID_DESCRIPTION))
-                .setProductId(resultSet.getLong(ProductDescriptionArguments.PRODUCT_ID))
-                .setCountryOfOrigin(resultSet.getString(ProductDescriptionArguments.COUNTRY_OF_ORIGIN))
-                .setType(resultSet.getString(ProductDescriptionArguments.TYPE_OF_PRODUCT))
-                .setBrand(resultSet.getString(ProductDescriptionArguments.BRAND_OF_PRODUCT))
-                .setIssueDate(resultSet.getObject(ProductDescriptionArguments.ISSUE_DATE, LocalDate.class))
-                .build();
-        product.setDescription(description);
-        sale.setProductOfSale(product);
-
         return Optional.ofNullable(sale);
     }
 

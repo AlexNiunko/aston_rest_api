@@ -44,11 +44,11 @@ public class ShowUserPurchases implements Command {
         ProductMapper productMapper= ProductMapperImpl.getMapper();
         UserDto userDto = (UserDto) session.getAttribute(Attributes.USER);
         User user= userMapper.map(userDto);
-        HashMap<Long, Product>purchases =new HashMap<>();
+        List<Product>purchases =new ArrayList<>();
         try{
             purchases=userService.selectUserPurchases(user);
             List<ProductDto>purchasesDto=new ArrayList<>();
-            for (Product item: purchases.values()) {
+            for (Product item: purchases) {
                 purchasesDto.add(productMapper.map(item));
             }
             session.setAttribute(Attributes.USER_PURCHASES,purchasesDto);

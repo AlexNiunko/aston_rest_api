@@ -37,7 +37,7 @@ public class DeleteProductCommand implements Command {
         long idProduct= Long.parseLong(request.getParameter(ProductArguments.ID_PRODUCT));
         Product product=new Product.ProductBuilder(idProduct).build();
         try{
-            Optional<Product>optionalProduct=productService.findProductBuId(product);
+            Optional<Product>optionalProduct=productService.findProductBuId(product.getId());
             if (optionalProduct.isPresent() && productService.deleteProduct(optionalProduct.get())){
                 router.setPage(Pages.ADMIN_PAGE);
                 router.setRedirect();

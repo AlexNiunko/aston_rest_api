@@ -13,8 +13,8 @@ public interface ProductService {
     boolean deleteProduct(Product product) throws ServiceException;
     boolean updateProduct(Product product) throws ServiceException;
     List<Product> selectAllProducts() throws ServiceException;
-    Optional<Product>findProductBuId(Product product) throws ServiceException;
-    Map<Long, User>findProductBuyers(Product product) throws ServiceException;
+    Optional<Product>findProductBuId(long idProduct) throws ServiceException;
+    List<User>findProductBuyers(Product product) throws ServiceException;
 
 
 

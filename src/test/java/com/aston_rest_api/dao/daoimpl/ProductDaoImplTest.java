@@ -28,7 +28,7 @@ class ProductDaoImplTest {
     private static ProductDaoImpl productDao;
     private static Product product;
 
-    private static Map<Long, User> buyers = new HashMap<>();
+    private static List<User> buyers = new ArrayList<>();
     private static List<Product> productList = new ArrayList<>();
 
 
@@ -79,8 +79,8 @@ class ProductDaoImplTest {
                 .setSurname("Radzivil")
                 .setUsersRole(1)
                 .build();
-        buyers.put(1L, user);
-        buyers.put(2L, user);
+        buyers.add(user);
+        buyers.add(user);
         product = new Product.ProductBuilder(1).build();
         Assertions.assertEquals(buyers, productDao.findProductBuyers(product).get().getBuyers());
     }
@@ -95,8 +95,8 @@ class ProductDaoImplTest {
                 .setSurname("Radzivil")
                 .setUsersRole(1)
                 .build();
-        buyers.put(1L, user);
-        buyers.put(2L, user);
+        buyers.add(user);
+        buyers.add(user);
         product = new Product.ProductBuilder(15).build();
         Assertions.assertNotEquals(buyers, productDao.findProductBuyers(product).get().getBuyers());
     }
@@ -129,13 +129,13 @@ class ProductDaoImplTest {
     void successfulFindProductById() throws DaoException {
         Product expected = new Product.ProductBuilder(1).setProductName("hammer").setProductPrice(10.25).setAmount(5).build();
         Product product=new Product.ProductBuilder(1).build();
-        Assertions.assertEquals(expected,productDao.findProductById(product).get());
+        Assertions.assertEquals(expected,productDao.findProductById(product.getId()).get());
     }
     @Test
     @Order(6)
     void unsuccessfulFindProductById() throws DaoException {
         Product product=new Product.ProductBuilder().build();
-        Assertions.assertFalse(productDao.findProductById(product).isPresent());
+        Assertions.assertFalse(productDao.findProductById(product.getId()).isPresent());
     }
 
     @Test
@@ -262,8 +262,7 @@ class ProductDaoImplTest {
     @Test
     @Order(16)
     void findIfProductNull() throws DaoException {
-        product=null;
-        Assertions.assertFalse(productDao.findProductById(product).isPresent());
+        Assertions.assertFalse(productDao.findProductById(0).isPresent());
     }
     @Test
     @Order(17)
@@ -271,11 +270,4 @@ class ProductDaoImplTest {
         product=null;
         Assertions.assertFalse(productDao.findProductBuyers(product).isPresent());
     }
-
-
-
-
-
-
-
 }

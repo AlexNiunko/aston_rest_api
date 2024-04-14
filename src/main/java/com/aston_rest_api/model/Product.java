@@ -1,5 +1,6 @@
 package com.aston_rest_api.model;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -8,7 +9,7 @@ public class Product extends AbstractEntity {
      private double productPrice;
      private int amount;
      private ProductDescription description;
-     private Map<Long, User>buyers;
+     private List<User> buyers;
 
      private Product(ProductBuilder builder) {
           super(builder.idProduct);
@@ -51,11 +52,11 @@ public class Product extends AbstractEntity {
           this.description = description;
      }
 
-     public Map<Long, User> getBuyers() {
+     public List<User> getBuyers() {
           return buyers;
      }
 
-     public void setBuyers(Map<Long, User> buyers) {
+     public void setBuyers(List<User> buyers) {
           this.buyers = buyers;
      }
 
@@ -74,7 +75,7 @@ public class Product extends AbstractEntity {
 
      @Override
      public String toString() {
-          final StringBuilder sb = new StringBuilder("ProductDto{");
+          final StringBuilder sb = new StringBuilder("Product{");
           sb.append("productName='").append(productName).append('\'');
           sb.append(", productPrice=").append(productPrice);
           sb.append(", amount=").append(amount);
@@ -91,7 +92,7 @@ public class Product extends AbstractEntity {
           private double productPrice;
           private int amount;
           private ProductDescription description;
-          private Map<Long, User>buyers;
+          private List<User>buyers;
 
           public ProductBuilder(long idProduct) {
                this.idProduct = idProduct;
@@ -111,7 +112,7 @@ public class Product extends AbstractEntity {
                this.amount = amount;
                return this;
           }
-          public ProductBuilder setBuyers(Map<Long, User>buyers) {
+          public ProductBuilder setBuyers(List<User>buyers) {
                this.buyers = buyers;
                return this;
           }

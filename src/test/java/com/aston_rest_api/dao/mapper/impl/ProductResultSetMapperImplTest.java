@@ -1,6 +1,7 @@
 package com.aston_rest_api.dao.mapper.impl;
 
 import com.aston_rest_api.dao.daoimpl.ProductDaoImpl;
+import com.aston_rest_api.dao.mapper.ListResultSetMapper;
 import com.aston_rest_api.dao.mapper.ResultSetMapper;
 import com.aston_rest_api.db.ConnectionManagerImpl;
 import com.aston_rest_api.exception.DaoException;
@@ -112,12 +113,13 @@ class ProductResultSetMapperImplTest {
 
     @Test
     void mapItemEntities() throws DaoException {
-        Map<Long,User> buyers;
+        List<User> buyers;
         try (Connection connection = connectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(ProductDaoImpl.FIND_ALL_PRODUCT_BUYERS)) {
             statement.setLong(1,product.getId());
+            ListResultSetMapper listMapper=(ListResultSetMapper) mapper;
             try (ResultSet resultSet = statement.executeQuery()) {
-                buyers=mapper.mapItemEntities(resultSet);
+                buyers=listMapper.mapItemEntities(resultSet);
             }
         } catch (SQLException e) {
             throw new DaoException("Failed to map product list " + e);

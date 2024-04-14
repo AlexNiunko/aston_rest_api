@@ -29,7 +29,7 @@ public class SaleServiceImpl implements SaleService {
             return result;
         }
         try {
-            Optional<Product>optionalProduct=productDao.findProductById(sale.getProductOfSale());
+            Optional<Product>optionalProduct=productDao.findProductById(sale.getProductId());
             if (optionalProduct.isPresent() && (optionalProduct.get().getAmount()-sale.getAmountSale())>0){
                 result=saleDao.insert(sale);
             }

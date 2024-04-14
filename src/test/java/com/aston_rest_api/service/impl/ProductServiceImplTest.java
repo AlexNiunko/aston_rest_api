@@ -113,24 +113,24 @@ class ProductServiceImplTest {
     @Test
     void shouldFindProductById() throws ServiceException, DaoException {
         Optional<Product>optionalProduct=Optional.of(product);
-        Mockito.doReturn(optionalProduct).when(productDao).findProductById(product);
-        Assertions.assertTrue(productService.findProductBuId(product).isPresent());
+        Mockito.doReturn(optionalProduct).when(productDao).findProductById(product.getId());
+        Assertions.assertTrue(productService.findProductBuId(product.getId()).isPresent());
     }
     @Test
     void findProductByIdNull() throws ServiceException, DaoException {
         Optional<Product>optionalProduct=Optional.empty();
-        Mockito.doReturn(optionalProduct).when(productDao).findProductById(null);
-        Assertions.assertFalse(productService.findProductBuId(null).isPresent());
+        Mockito.doReturn(optionalProduct).when(productDao).findProductById(0);
+        Assertions.assertFalse(productService.findProductBuId(0).isPresent());
     }
     @Test
     void throwProductById() throws ServiceException, DaoException {
-        Mockito.doThrow(DaoException.class).when(productDao).findProductById(product);
-        Assertions.assertThrows(ServiceException.class,()->productService.findProductBuId(product));
+        Mockito.doThrow(DaoException.class).when(productDao).findProductById(product.getId());
+        Assertions.assertThrows(ServiceException.class,()->productService.findProductBuId(product.getId()));
     }
 
     @Test
     void shouldFindProductBuyers() throws ServiceException, DaoException {
-        HashMap<Long, User>map=new HashMap<>();
+        List<User>buyers=new ArrayList<>();
         User user = new User
                 .UserBuilder(1)
                 .setLogin("michai@gmail.com")
@@ -139,18 +139,18 @@ class ProductServiceImplTest {
                 .setSurname("Radzivil")
                 .setUsersRole(1)
                 .build();
-        map.put(1L,user);
-        product.setBuyers(map);
+        buyers.add(user);
+        product.setBuyers(buyers);
         Optional<Product>optionalProduct=Optional.of(product);
         Mockito.doReturn(optionalProduct).when(productDao).findProductBuyers(product);
-        Assertions.assertEquals(map,productService.findProductBuyers(product));
+        Assertions.assertEquals(buyers,productService.findProductBuyers(product));
     }
     @Test
     void shouldFindProductBuyersNull() throws ServiceException, DaoException {
         Optional<Product>optionalProduct=Optional.empty();
-        HashMap<Long,User>map=new HashMap<>();
+        List<User>list=new ArrayList<>();
         Mockito.doReturn(optionalProduct).when(productDao).findProductBuyers(null);
-        Assertions.assertEquals(map,productService.findProductBuyers(null));
+        Assertions.assertEquals(list,productService.findProductBuyers(null));
     }
     @Test
     void findProductBuyersThrow() throws ServiceException, DaoException {

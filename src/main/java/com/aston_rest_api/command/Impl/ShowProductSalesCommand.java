@@ -53,7 +53,7 @@ public class ShowProductSalesCommand implements Command {
         long idProduct= Long.parseLong(request.getParameter(ProductArguments.ID_PRODUCT));
         Product product=new Product.ProductBuilder(idProduct).build();
         try{
-            Optional<Product>optionalProduct=productService.findProductBuId(product);
+            Optional<Product>optionalProduct=productService.findProductBuId(product.getId());
             if (optionalProduct.isPresent()){
                 List<Sale>saleList=saleService.findSalesByProduct(optionalProduct.get());
                 session.setAttribute(Attributes.PRODUCT_SALES,saleList);

@@ -2,6 +2,7 @@ package com.aston_rest_api.dao.daoimpl;
 
 import com.aston_rest_api.dao.BaseDao;
 import com.aston_rest_api.dao.ProductDao;
+import com.aston_rest_api.dao.mapper.ListResultSetMapper;
 import com.aston_rest_api.dao.mapper.ResultSetMapper;
 import com.aston_rest_api.dao.mapper.impl.ProductResultSetMapperImpl;
 import com.aston_rest_api.db.ConnectionManagerImpl;
@@ -176,14 +177,11 @@ public class ProductDaoImpl extends BaseDao<Product> implements ProductDao {
 
 
     @Override
-    public Optional<Product> findProductById(Product product) throws DaoException {
+    public Optional<Product> findProductById(long idProduct) throws DaoException {
         Optional<Product>optionalProduct=Optional.empty();
-        if (product==null){
-            return optionalProduct;
-        }
         try(Connection connection= connectionManager.getConnection();
         PreparedStatement statement=connection.prepareStatement(FIND_PRODUCT_BY_ID)) {
-            statement.setLong(1,product.getId());
+            statement.setLong(1,idProduct);
             try(ResultSet resultSet= statement.executeQuery()) {
              optionalProduct=resultSetMapper.mapItem(resultSet);
             }
@@ -199,13 +197,14 @@ public class ProductDaoImpl extends BaseDao<Product> implements ProductDao {
         if (product==null){
             return optionalProduct;
         }
-        Map<Long,User>buyers;
+        List<User>buyers;
         long productId= product.getId();
         try(Connection connection= connectionManager.getConnection();
         PreparedStatement statement=connection.prepareStatement(FIND_ALL_PRODUCT_BUYERS) ){
             statement.setLong(1,product.getId());
             try(ResultSet resultSet= statement.executeQuery()){
-                buyers=resultSetMapper.mapItemEntities(resultSet);
+                ListResultSetMapper<User>listResultSetMapper=(ListResultSetMapper<User>)resultSetMapper;
+                buyers=listResultSetMapper.mapItemEntities(resultSet);
                 product.setBuyers(buyers);
             }
         }catch (SQLException e){

@@ -48,7 +48,7 @@ public class UpdateProductCommand  implements Command {
         String issueDate = request.getParameter(ProductDescriptionArguments.ISSUE_DATE);
         try{
             Product product=new Product.ProductBuilder(idProduct).build();
-            Optional<Product>optionalProduct=productService.findProductBuId(product);
+            Optional<Product>optionalProduct=productService.findProductBuId(product.getId());
                 if (optionalProduct.isPresent()  && validator.validateNumber(productPrice) && validator.validateNumber(amountOfProduct)
                         && validator.validateNameOrSurname(countryOfOrigin) && validator.validateNameOrSurname(typeOfProduct)
                         && validator.validateNameOrSurname(brandOfProduct)

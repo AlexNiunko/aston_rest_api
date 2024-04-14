@@ -51,20 +51,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public HashMap<Long, Product> selectUserPurchases(User user) throws ServiceException {
-        HashMap<Long,Product>map=new HashMap<>();
+    public List<Product> selectUserPurchases(User user) throws ServiceException {
+        List<Product>list=new ArrayList<>();
         if (user==null){
-            return map;
+            return list;
         }
         try {
             Optional<User>optionalUser=userDao.findUserPurchases(user);
             if (optionalUser.isPresent()){
-                map= (HashMap<Long, Product>) optionalUser.get().getPurchases();
+                list=  optionalUser.get().getPurchases();
             }
         } catch (DaoException e) {
             throw new ServiceException("Failed to find user purchases "+e);
         }
-        return map;
+        return list;
     }
 
     @Override

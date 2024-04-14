@@ -71,13 +71,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Optional<Product> findProductBuId(Product product) throws ServiceException {
+    public Optional<Product> findProductBuId(long idProduct) throws ServiceException {
         Optional<Product> optionalProduct = Optional.empty();
-        if (product == null) {
-            return optionalProduct;
-        }
         try {
-            optionalProduct = productDao.findProductById(product);
+            optionalProduct = productDao.findProductById(idProduct);
         } catch (DaoException e) {
             throw new ServiceException("Failed to find product with Id" + e);
         }
@@ -85,19 +82,19 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Map<Long, User> findProductBuyers(Product product) throws ServiceException {
-        Map<Long, User> map = new HashMap<>();
+    public List<User> findProductBuyers(Product product) throws ServiceException {
+        List<User> list = new ArrayList<>();
         if (product == null) {
-            return map;
+            return list;
         }
         try {
             Optional<Product> optionalProduct = productDao.findProductBuyers(product);
             if (optionalProduct.isPresent()) {
-                map = optionalProduct.get().getBuyers();
+                list = optionalProduct.get().getBuyers();
             }
         } catch (DaoException e) {
             throw new ServiceException("Failed to find buyers " + e);
         }
-        return map;
+        return list;
     }
 }

@@ -9,6 +9,6 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface ProductDao {
- Optional<Product>findProductById(Product product) throws DaoException;
+ Optional<Product>findProductById(long id) throws DaoException;
  Optional<Product> findProductBuyers(Product product) throws DaoException;
 }

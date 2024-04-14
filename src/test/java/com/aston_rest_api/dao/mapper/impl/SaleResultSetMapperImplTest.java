@@ -3,6 +3,7 @@ package com.aston_rest_api.dao.mapper.impl;
 import com.aston_rest_api.dao.daoimpl.ProductDaoImpl;
 import com.aston_rest_api.dao.daoimpl.SaleDaoImpl;
 import com.aston_rest_api.dao.daoimpl.UserDaoImpl;
+import com.aston_rest_api.dao.mapper.ListResultSetMapper;
 import com.aston_rest_api.dao.mapper.ResultSetMapper;
 import com.aston_rest_api.db.ConnectionManagerImpl;
 import com.aston_rest_api.exception.DaoException;
@@ -96,7 +97,6 @@ class SaleResultSetMapperImplTest {
     @Test
     void mapItem() throws DaoException {
         product.setDescription(description);
-        sale.setProductOfSale(product);
         Optional<Sale> optionalSale = Optional.empty();
         try (Connection connection = connectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(FIND_SALE_BY_ID)) {
@@ -129,18 +129,4 @@ class SaleResultSetMapperImplTest {
         Assertions.assertEquals(3,saleList.size());
     }
 
-    @Test
-    void mapItemEntities() throws DaoException {
-        HashMap<Long,Product>map;
-        try(Connection connection=connectionManager.getConnection();
-        PreparedStatement statement=connection.prepareStatement(UserDaoImpl.FIND_ALL_USER_PURCHASES)){
-            statement.setLong(1,1);
-            try(ResultSet resultSet=statement.executeQuery()){
-                map= (HashMap<Long, Product>) mapper.mapItemEntities(resultSet);
-            }
-        }catch (SQLException e){
-            throw new DaoException("Failed to test map item entities "+e);
-        }
-        Assertions.assertEquals(2,map.size());
-    }
 }

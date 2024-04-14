@@ -10,8 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public interface ResultSetMapper <T,U extends AbstractEntity>{
+public interface ResultSetMapper <T extends AbstractEntity>{
     Optional<T> mapItem(ResultSet resultSet)throws SQLException;
     List<T> mapListItems(ResultSet resultSet)throws SQLException;
-    Map<Long, U> mapItemEntities(ResultSet resultSet)throws SQLException;
 }

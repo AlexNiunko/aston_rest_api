@@ -4,6 +4,7 @@ import com.aston_rest_api.controller.arguments.ProductArguments;
 import com.aston_rest_api.controller.arguments.ProductDescriptionArguments;
 import com.aston_rest_api.controller.arguments.SaleArguments;
 import com.aston_rest_api.controller.arguments.UserArguments;
+import com.aston_rest_api.dao.mapper.ListResultSetMapper;
 import com.aston_rest_api.dao.mapper.ResultSetMapper;
 import com.aston_rest_api.model.Product;
 import com.aston_rest_api.model.ProductDescription;
@@ -14,7 +15,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 
-public class UserResultSetMapperImpl implements ResultSetMapper<User,Product> {
+public class UserResultSetMapperImpl implements ResultSetMapper<User>, ListResultSetMapper<Product> {
 
     private static UserResultSetMapperImpl instance=new UserResultSetMapperImpl();
 
@@ -26,12 +27,11 @@ public class UserResultSetMapperImpl implements ResultSetMapper<User,Product> {
     }
 
     @Override
-    public Map<Long, Product> mapItemEntities(ResultSet resultSet) throws SQLException {
-        Map<Long, Product> purchases = new HashMap<>();
+    public List<Product> mapItemEntities(ResultSet resultSet) throws SQLException {
+        List<Product> purchases = new ArrayList<>();
         Product product;
         ProductDescription productDescription;
         while (resultSet.next()) {
-            long idSale = resultSet.getInt(SaleArguments.ID_SALE);
             product = new Product.ProductBuilder(resultSet.getInt(ProductArguments.ID_PRODUCT))
                     .setProductName(resultSet.getString(ProductArguments.PRODUCT_NAME))
                     .setProductPrice(resultSet.getDouble(ProductArguments.PRODUCT_PRICE))
@@ -45,7 +45,7 @@ public class UserResultSetMapperImpl implements ResultSetMapper<User,Product> {
                     .setIssueDate(resultSet.getObject(ProductDescriptionArguments.ISSUE_DATE, LocalDate.class))
                     .build();
             product.setDescription(productDescription);
-            purchases.put(idSale, product);
+            purchases.add(product);
         }
         return purchases;
     }
@@ -53,7 +53,7 @@ public class UserResultSetMapperImpl implements ResultSetMapper<User,Product> {
     @Override
     public Optional<User> mapItem(ResultSet resultSet) throws SQLException {
         Optional<User> optionalUser = Optional.empty();
-        Map<Long, Product> purchases = new HashMap<>();
+        List<Product> purchases = new ArrayList<>();
            if (resultSet.next()) {
             optionalUser = getOptionalUser(resultSet, purchases);
         }
@@ -64,7 +64,7 @@ public class UserResultSetMapperImpl implements ResultSetMapper<User,Product> {
     public List<User> mapListItems(ResultSet resultSet) throws SQLException {
         List<User>userList=new ArrayList<>();
         Optional<User> optionalUser = Optional.empty();
-        Map<Long, Product> purchases = new HashMap<>();
+        List<Product> purchases = new ArrayList<>();
         while (resultSet.next()){
             optionalUser=getOptionalUser(resultSet,purchases);
             optionalUser.ifPresent(userList::add);
@@ -73,7 +73,7 @@ public class UserResultSetMapperImpl implements ResultSetMapper<User,Product> {
     }
 
 
-    private static Optional<User> getOptionalUser(ResultSet resultSet, Map<Long, Product> purchases) throws SQLException {
+    private static Optional<User> getOptionalUser(ResultSet resultSet, List<Product> purchases) throws SQLException {
         Optional<User> optionalUser;
         User user = new User.UserBuilder(resultSet.getInt(UserArguments.USER_ID))
                 .setLogin(resultSet.getString(UserArguments.LOGIN))

@@ -21,7 +21,6 @@ public class SaleMapperImpl implements SaleMapper {
                 .setBuyerId(saleDto.getBuyerId())
                 .setDateOfSale(LocalDate.parse(saleDto.getDateOfSale()))
                 .setAmountSale(Integer.parseInt(saleDto.getAmountOfSale()))
-                .setProductOfSale(ProductMapperImpl.getMapper().map(saleDto.getProductDto()))
                 .build();
     }
 
@@ -30,7 +29,6 @@ public class SaleMapperImpl implements SaleMapper {
         return new SaleDto.SaleDtoBuilder(sale.getId())
                 .setProductId(sale.getProductId())
                 .setBuyerId(sale.getBuyerId())
-                .setProductDto(ProductMapperImpl.getMapper().map(sale.getProductOfSale()))
                 .setAmountOfSale(String.valueOf(sale.getAmountSale()))
                 .setDateOfSale(sale.getDateOfSale().toString())
                 .build();
