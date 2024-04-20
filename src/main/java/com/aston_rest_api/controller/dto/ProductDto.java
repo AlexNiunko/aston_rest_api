@@ -3,14 +3,14 @@ package com.aston_rest_api.controller.dto;
 import java.util.Map;
 import java.util.Objects;
 
-public class ProductDto  {
+public class ProductDto {
     private long productDtoId;
     private String productName;
     private String productPrice;
     private String amount;
     private ProductDescriptionDto description;
 
-    public ProductDto(ProductDtoBuilder builder) {
+    private ProductDto(ProductDtoBuilder builder) {
         this.productDtoId = builder.productDtoId;
         this.productName = builder.productName;
         this.productPrice = builder.productPrice;
@@ -72,7 +72,7 @@ public class ProductDto  {
         return Objects.hash(getProductDtoId(), getProductName(), getProductPrice(), getAmount(), getDescription());
     }
 
-    public static class   ProductDtoBuilder{
+    public static class ProductDtoBuilder {
         private long productDtoId;
         private String productName;
         private String productPrice;
@@ -82,24 +82,28 @@ public class ProductDto  {
         public ProductDtoBuilder(long productDtoId) {
             this.productDtoId = productDtoId;
         }
+
         public ProductDtoBuilder setProductName(String productName) {
             this.productName = productName;
             return this;
         }
+
         public ProductDtoBuilder setProductPrice(String productPrice) {
             this.productPrice = productPrice;
             return this;
         }
+
         public ProductDtoBuilder setProductAmount(String productAmount) {
             this.amount = productAmount;
             return this;
         }
-        public ProductDtoBuilder setDescriptions(ProductDescriptionDto description){
-            this.description=description;
+
+        public ProductDtoBuilder setDescriptions(ProductDescriptionDto description) {
+            this.description = description;
             return this;
         }
 
-        public ProductDto build(){
+        public ProductDto build() {
             return new ProductDto(this);
         }
 

@@ -28,6 +28,7 @@ public class ShowAllProductsCommand implements Command {
     public ShowAllProductsCommand(HikariDataSource config) {
         this.config = config;
     }
+
     @Override
     public Router execute(HttpServletRequest request) throws CommandException {
         Router router = new Router();
@@ -35,16 +36,16 @@ public class ShowAllProductsCommand implements Command {
         ProductService productService = new ProductServiceImpl(productDao);
         HttpSession session = request.getSession();
         ProductMapper mapper = ProductMapperImpl.getMapper();
-        try{
-            List<Product>products=productService.selectAllProducts();
-            List<ProductDto>productDtos=new ArrayList<>();
-            for (Product product:products) {
+        try {
+            List<Product> products = productService.selectAllProducts();
+            List<ProductDto> productDtos = new ArrayList<>();
+            for (Product product : products) {
                 productDtos.add(mapper.map(product));
             }
-            session.setAttribute(Attributes.PRODUCTS,productDtos);
+            session.setAttribute(Attributes.PRODUCTS, productDtos);
             router.setPage(Pages.SHOW_ALL_PRODUCTS);
-        }catch (ServiceException e){
-            throw new CommandException("Failed to find all products "+e);
+        } catch (ServiceException e) {
+            throw new CommandException("Failed to find all products " + e);
         }
         return router;
     }

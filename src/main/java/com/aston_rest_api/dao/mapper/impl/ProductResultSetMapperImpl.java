@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 public class ProductResultSetMapperImpl implements ResultSetMapper<Product>, ListResultSetMapper<User> {
-    private static ProductResultSetMapperImpl instance=new ProductResultSetMapperImpl();
+    private static ProductResultSetMapperImpl instance = new ProductResultSetMapperImpl();
 
     private ProductResultSetMapperImpl() {
     }
@@ -28,21 +28,21 @@ public class ProductResultSetMapperImpl implements ResultSetMapper<Product>, Lis
 
     @Override
     public Optional<Product> mapItem(ResultSet resultSet) throws SQLException {
-        Optional<Product> optionalProduct=Optional.empty();
-        List<User>buyers=new ArrayList<>();
+        Optional<Product> optionalProduct = Optional.empty();
+        List<User> buyers = new ArrayList<>();
         if (resultSet.next()) {
-            optionalProduct=getOptionalProduct(resultSet,buyers);
+            optionalProduct = getOptionalProduct(resultSet, buyers);
         }
         return optionalProduct;
     }
 
     @Override
     public List<Product> mapListItems(ResultSet resultSet) throws SQLException {
-        List<Product>productList=new ArrayList<>();
-        Optional<Product>optionalProduct=Optional.empty();
-        List<User>buyers=new ArrayList<>();
-        while (resultSet.next()){
-            optionalProduct=getOptionalProduct(resultSet,buyers);
+        List<Product> productList = new ArrayList<>();
+        Optional<Product> optionalProduct = Optional.empty();
+        List<User> buyers = new ArrayList<>();
+        while (resultSet.next()) {
+            optionalProduct = getOptionalProduct(resultSet, buyers);
             optionalProduct.ifPresent(productList::add);
         }
         return productList;
@@ -50,10 +50,10 @@ public class ProductResultSetMapperImpl implements ResultSetMapper<Product>, Lis
 
     @Override
     public List<User> mapItemEntities(ResultSet resultSet) throws SQLException {
-        List<User>buyers=new ArrayList<>();
+        List<User> buyers = new ArrayList<>();
         User user;
-        while (resultSet.next()){
-            user=new User.UserBuilder(resultSet.getLong(UserArguments.USER_ID))
+        while (resultSet.next()) {
+            user = new User.UserBuilder(resultSet.getLong(UserArguments.USER_ID))
                     .setLogin(resultSet.getString(UserArguments.LOGIN))
                     .setPassword(resultSet.getString(UserArguments.PASSWORD))
                     .setName(resultSet.getString(UserArguments.NAME))
@@ -66,17 +66,15 @@ public class ProductResultSetMapperImpl implements ResultSetMapper<Product>, Lis
     }
 
 
-
-
-    private  Optional<Product> getOptionalProduct(ResultSet resultSet, List<User> buyers) throws SQLException {
+    private Optional<Product> getOptionalProduct(ResultSet resultSet, List<User> buyers) throws SQLException {
         Optional<Product> optionalUser;
-        Product product=new Product.ProductBuilder(resultSet.getLong(ProductArguments.ID_PRODUCT))
+        Product product = new Product.ProductBuilder(resultSet.getLong(ProductArguments.ID_PRODUCT))
                 .setProductName(resultSet.getString(ProductArguments.PRODUCT_NAME))
                 .setProductPrice(resultSet.getDouble(ProductArguments.PRODUCT_PRICE))
                 .setAmount(resultSet.getInt(ProductArguments.AMOUNT_OF_PRODUCT))
                 .setBuyers(buyers)
                 .build();
-        ProductDescription description=new ProductDescription.ProductDescriptionBuilder(resultSet.getLong(ProductDescriptionArguments.ID_DESCRIPTION))
+        ProductDescription description = new ProductDescription.ProductDescriptionBuilder(resultSet.getLong(ProductDescriptionArguments.ID_DESCRIPTION))
                 .setProductId(resultSet.getLong(ProductDescriptionArguments.PRODUCT_ID))
                 .setCountryOfOrigin(resultSet.getString(ProductDescriptionArguments.COUNTRY_OF_ORIGIN))
                 .setType(resultSet.getString(ProductDescriptionArguments.TYPE_OF_PRODUCT))

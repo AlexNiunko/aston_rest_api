@@ -4,7 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class ProductDescription extends AbstractEntity {
+public class ProductDescription  {
+    private long id;
     private long productID;
     private String countryOfOrigin;
     private String type;
@@ -12,7 +13,7 @@ public class ProductDescription extends AbstractEntity {
     private LocalDate issueDate;
 
     private ProductDescription(ProductDescriptionBuilder builder) {
-        super(builder.productDescriptionId);
+        this.id= builder.productDescriptionId;
         this.productID = builder.productID;
         this.countryOfOrigin = builder.countryOfOrigin;
         this.type = builder.type;
@@ -59,6 +60,15 @@ public class ProductDescription extends AbstractEntity {
 
     public void setIssueDate(LocalDate issueDate) {
         this.issueDate = issueDate;
+    }
+
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     @Override

@@ -4,14 +4,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class Sale extends AbstractEntity {
+public class Sale  {
+    private long id;
     private long buyerId;
     private long productId;
     private LocalDate dateOfSale;
     private int amountSale;
 
     private Sale(SaleBuilder builder) {
-        super(builder.idSale);
+        this.id=builder.idSale;
         this.buyerId = builder.buyerId;
         this.productId=builder.productId;
         this.dateOfSale=builder.dateOfSale;
@@ -48,6 +49,15 @@ public class Sale extends AbstractEntity {
 
     public void setAmountSale(int amountSale) {
         this.amountSale = amountSale;
+    }
+
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     @Override

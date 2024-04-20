@@ -24,7 +24,6 @@ public enum CommandType {
     UPDATE_SALE_COMMAND(new UpdateSaleCommand(Configuration.dataSource)),
     TEST_COMMAND(new TestCommand());
 
-
     private Command command;
 
     CommandType(Command command) {

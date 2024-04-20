@@ -8,12 +8,12 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class Configuration {
-    private static final Properties PROPERTIES=new Properties();
-    public static final HikariDataSource dataSource=new HikariDataSource();
-    private static final String PROPERTIES_PATH="datasource.properties";
+    private static final Properties PROPERTIES = new Properties();
+    public static final HikariDataSource dataSource = new HikariDataSource();
+    private static final String PROPERTIES_PATH = "datasource.properties";
 
     static {
-                try(InputStream inputStream= Configuration.class.getClassLoader().getResourceAsStream(PROPERTIES_PATH)){
+        try (InputStream inputStream = Configuration.class.getClassLoader().getResourceAsStream(PROPERTIES_PATH)) {
             PROPERTIES.load(inputStream);
             dataSource.setDriverClassName(PROPERTIES.getProperty("collectionManagerImpl.db.driver"));
             dataSource.setJdbcUrl(PROPERTIES.getProperty("collectionManagerImpl.db.url"));
@@ -23,8 +23,8 @@ public class Configuration {
             dataSource.setMaximumPoolSize(1000);
             dataSource.setAutoCommit(true);
             dataSource.setLoginTimeout(10);
-        }catch (IOException | SQLException e){
-            throw new ExceptionInInitializerError("Failed to read configuration fail"+e);
+        } catch (IOException | SQLException e) {
+            throw new ExceptionInInitializerError("Failed to read configuration fail" + e);
         }
     }
 

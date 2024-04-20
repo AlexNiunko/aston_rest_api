@@ -31,30 +31,30 @@ public class ShowUserPurchases implements Command {
     private HikariDataSource config;
 
     public ShowUserPurchases(HikariDataSource config) {
-        this.config=config;
+        this.config = config;
     }
 
     @Override
     public Router execute(HttpServletRequest request) throws CommandException {
-        Router router=new Router();
-        HttpSession session= request.getSession();
-        UserDaoImpl userDao=new UserDaoImpl(ConnectionManagerImpl.getInstance(config));
-        UserService userService=new UserServiceImpl(userDao);
-        UserMapper userMapper= UserMapperImpl.getMapper();
-        ProductMapper productMapper= ProductMapperImpl.getMapper();
+        Router router = new Router();
+        HttpSession session = request.getSession();
+        UserDaoImpl userDao = new UserDaoImpl(ConnectionManagerImpl.getInstance(config));
+        UserService userService = new UserServiceImpl(userDao);
+        UserMapper userMapper = UserMapperImpl.getMapper();
+        ProductMapper productMapper = ProductMapperImpl.getMapper();
         UserDto userDto = (UserDto) session.getAttribute(Attributes.USER);
-        User user= userMapper.map(userDto);
-        List<Product>purchases =new ArrayList<>();
-        try{
-            purchases=userService.selectUserPurchases(user);
-            List<ProductDto>purchasesDto=new ArrayList<>();
-            for (Product item: purchases) {
+        User user = userMapper.map(userDto);
+        List<Product> purchases = new ArrayList<>();
+        try {
+            purchases = userService.selectUserPurchases(user);
+            List<ProductDto> purchasesDto = new ArrayList<>();
+            for (Product item : purchases) {
                 purchasesDto.add(productMapper.map(item));
             }
-            session.setAttribute(Attributes.USER_PURCHASES,purchasesDto);
+            session.setAttribute(Attributes.USER_PURCHASES, purchasesDto);
             router.setPage(Pages.PURCHASES_PAGE);
-        }catch (ServiceException e){
-            throw new CommandException("Failed find user purchases "+e);
+        } catch (ServiceException e) {
+            throw new CommandException("Failed find user purchases " + e);
         }
         return router;
     }

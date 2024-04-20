@@ -22,48 +22,49 @@ import jakarta.servlet.http.HttpSession;
 import javax.xml.validation.Validator;
 import java.util.UUID;
 
-public class AddNewUserCommand  implements Command {
+public class AddNewUserCommand implements Command {
     private HikariDataSource config;
+
     public AddNewUserCommand(HikariDataSource config) {
-        this.config=config;
+        this.config = config;
     }
 
     @Override
     public Router execute(HttpServletRequest request) throws CommandException {
-        Router router=new Router();
-        UserDaoImpl userDao=new UserDaoImpl(ConnectionManagerImpl.getInstance(config));
-        UserService userService=new UserServiceImpl(userDao);
-        HttpSession session= request.getSession();
-        ParameterValidator validator=ParameterValidator.getInstance();
-        UserMapper mapper= UserMapperImpl.getMapper();
-        UUID uuid=UUID.randomUUID();
-        long idDtoUser=uuid.getMostSignificantBits();
-        String email=request.getParameter(UserArguments.LOGIN);
-        String password=request.getParameter(UserArguments.PASSWORD);
-        String name=request.getParameter(UserArguments.NAME);
-        String surname=request.getParameter(UserArguments.SURNAME);
-        int role=1;
-        if ( validator.validateEmail(email) && validator.validatePassword(password)
-                && validator.validateNameOrSurname(name) && validator.validateNameOrSurname(surname) ){
-            UserDto userDto=new UserDto.UserDtoBuilder(idDtoUser)
+        Router router = new Router();
+        UserDaoImpl userDao = new UserDaoImpl(ConnectionManagerImpl.getInstance(config));
+        UserService userService = new UserServiceImpl(userDao);
+        HttpSession session = request.getSession();
+        ParameterValidator validator = ParameterValidator.getInstance();
+        UserMapper mapper = UserMapperImpl.getMapper();
+        UUID uuid = UUID.randomUUID();
+        long idDtoUser = uuid.getMostSignificantBits();
+        String email = request.getParameter(UserArguments.LOGIN);
+        String password = request.getParameter(UserArguments.PASSWORD);
+        String name = request.getParameter(UserArguments.NAME);
+        String surname = request.getParameter(UserArguments.SURNAME);
+        int role = 1;
+        if (validator.validateEmail(email) && validator.validatePassword(password)
+                && validator.validateNameOrSurname(name) && validator.validateNameOrSurname(surname)) {
+            UserDto userDto = new UserDto.UserDtoBuilder(idDtoUser)
                     .setLogin(email)
                     .setPassword(password)
                     .setName(name)
                     .setSurname(surname)
                     .setIsAdmin(role)
                     .build();
-            User user =mapper.map(userDto);
+            User user = mapper.map(userDto);
             try {
-                if (userService.addNewUser(user)){
+                if (userService.addNewUser(user)) {
                     router.setPage(Pages.USER_PAGE);
-                    session.setAttribute(Attributes.USER,userDto);
+                    session.setAttribute(Attributes.USER, userDto);
                 } else {
                     router.setPage(Pages.INDEX_PAGE);
                 }
             } catch (ServiceException e) {
                 throw new CommandException(e);
             }
-        }else {
+        } else {
             router.setPage(Pages.INDEX_PAGE);
         }
         return router;

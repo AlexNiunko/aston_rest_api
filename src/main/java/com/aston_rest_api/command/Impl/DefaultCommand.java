@@ -12,7 +12,7 @@ public class DefaultCommand implements Command {
 
     @Override
     public Router execute(HttpServletRequest request) throws CommandException {
-        Router router=new Router();
+        Router router = new Router();
         router.setPage(Pages.INDEX_PAGE);
         return router;
     }

@@ -29,36 +29,38 @@ import java.util.List;
 
 public class UpdateSaleCommand implements Command {
     private HikariDataSource config;
+
     public UpdateSaleCommand(HikariDataSource config) {
-        this.config=config;
+        this.config = config;
     }
+
     @Override
     public Router execute(HttpServletRequest request) throws CommandException {
-        Router router=new Router();
-        HttpSession session= request.getSession();
-        SaleMapper saleMapper= SaleMapperImpl.getMapper();
-        ParameterValidator validator=ParameterValidator.getInstance();
-        ProductDaoImpl productDao=new ProductDaoImpl(ConnectionManagerImpl.getInstance(config));
-        SaleDaoImpl saleDao=new SaleDaoImpl(ConnectionManagerImpl.getInstance(config));
-        UserMapper userMapper= UserMapperImpl.getMapper();
-        SaleService saleService=new SaleServiceImpl(productDao,saleDao);
-        long idSale= Long.parseLong(request.getParameter(SaleArguments.ID_SALE));
-        String dateOfSale=request.getParameter(SaleArguments.DATE_OF_SALE);
-        String amountOfSale=request.getParameter(SaleArguments.AMOUNT_OF_SALE);
+        Router router = new Router();
+        HttpSession session = request.getSession();
+        SaleMapper saleMapper = SaleMapperImpl.getMapper();
+        ParameterValidator validator = ParameterValidator.getInstance();
+        ProductDaoImpl productDao = new ProductDaoImpl(ConnectionManagerImpl.getInstance(config));
+        SaleDaoImpl saleDao = new SaleDaoImpl(ConnectionManagerImpl.getInstance(config));
+        UserMapper userMapper = UserMapperImpl.getMapper();
+        SaleService saleService = new SaleServiceImpl(productDao, saleDao);
+        long idSale = Long.parseLong(request.getParameter(SaleArguments.ID_SALE));
+        String dateOfSale = request.getParameter(SaleArguments.DATE_OF_SALE);
+        String amountOfSale = request.getParameter(SaleArguments.AMOUNT_OF_SALE);
         if (validator.validateDate(dateOfSale) && validator.validateNumber(amountOfSale)) {
-            Sale sale=new Sale.SaleBuilder(idSale)
+            Sale sale = new Sale.SaleBuilder(idSale)
                     .setDateOfSale(LocalDate.parse(dateOfSale))
                     .setAmountSale(Integer.parseInt(amountOfSale))
                     .build();
-            try{
-                if (saleService.updateSale(sale)){
+            try {
+                if (saleService.updateSale(sale)) {
                     router.setPage(Pages.ADMIN_PAGE);
                     router.setRedirect();
                 } else {
                     router.setPage(Pages.UPDATE_SALE);
                 }
-            }catch (ServiceException e){
-                throw new CommandException("Failed buy product "+e);
+            } catch (ServiceException e) {
+                throw new CommandException("Failed buy product " + e);
             }
         } else {
             router.setPage(Pages.UPDATE_SALE);

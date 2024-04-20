@@ -29,23 +29,24 @@ public class DeleteProductCommand implements Command {
     public DeleteProductCommand(HikariDataSource config) {
         this.config = config;
     }
+
     @Override
     public Router execute(HttpServletRequest request) throws CommandException {
         Router router = new Router();
         ProductDaoImpl productDao = new ProductDaoImpl(ConnectionManagerImpl.getInstance(config));
         ProductService productService = new ProductServiceImpl(productDao);
-        long idProduct= Long.parseLong(request.getParameter(ProductArguments.ID_PRODUCT));
-        Product product=new Product.ProductBuilder(idProduct).build();
-        try{
-            Optional<Product>optionalProduct=productService.findProductBuId(product.getId());
-            if (optionalProduct.isPresent() && productService.deleteProduct(optionalProduct.get())){
+        long idProduct = Long.parseLong(request.getParameter(ProductArguments.ID_PRODUCT));
+        Product product = new Product.ProductBuilder(idProduct).build();
+        try {
+            Optional<Product> optionalProduct = productService.findProductBuId(product.getId());
+            if (optionalProduct.isPresent() && productService.deleteProduct(optionalProduct.get())) {
                 router.setPage(Pages.ADMIN_PAGE);
                 router.setRedirect();
-            }else {
+            } else {
                 router.setPage(Pages.DELETE_PRODUCT);
             }
-        }catch (ServiceException e){
-            throw new CommandException("Failed to find all products "+e);
+        } catch (ServiceException e) {
+            throw new CommandException("Failed to find all products " + e);
         }
         return router;
     }

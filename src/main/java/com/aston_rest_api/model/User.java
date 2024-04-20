@@ -4,23 +4,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class User extends AbstractEntity {
+public class User  {
+    private long id;
     private String login;
     private String password;
     private String name;
     private String surname;
     private int usersRole;
 
-    private List<Product>purchases;
+    private List<Product> purchases;
 
     private User(UserBuilder builder) {
-        super(builder.userId);
+        this.id= builder.userId;
         this.login = builder.login;
         this.password = builder.password;
         this.name = builder.name;
         this.surname = builder.surname;
         this.usersRole = builder.usersRole;
-        this.purchases=builder.purchases;
+        this.purchases = builder.purchases;
     }
 
     public String getLogin() {
@@ -71,6 +72,14 @@ public class User extends AbstractEntity {
         this.purchases = purchases;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -105,11 +114,12 @@ public class User extends AbstractEntity {
         private String name;
         private String surname;
         private int usersRole;
-        private List<Product>purchases;
+        private List<Product> purchases;
 
         public UserBuilder(long userId) {
             this.userId = userId;
         }
+
         public UserBuilder() {
 
         }
@@ -139,7 +149,8 @@ public class User extends AbstractEntity {
             this.usersRole = role;
             return this;
         }
-        public UserBuilder setPurchases(List<Product>purchases) {
+
+        public UserBuilder setPurchases(List<Product> purchases) {
             this.purchases = purchases;
             return this;
         }
@@ -147,7 +158,6 @@ public class User extends AbstractEntity {
         public User build() {
             return new User(this);
         }
-
 
 
     }

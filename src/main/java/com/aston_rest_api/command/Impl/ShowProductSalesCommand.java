@@ -33,8 +33,6 @@ import java.util.Optional;
 public class ShowProductSalesCommand implements Command {
     private HikariDataSource config;
 
-
-
     public ShowProductSalesCommand(HikariDataSource config) {
         this.config = config;
     }
@@ -42,28 +40,28 @@ public class ShowProductSalesCommand implements Command {
     @Override
     public Router execute(HttpServletRequest request) throws CommandException {
         Router router = new Router();
-        HttpSession session= request.getSession();
+        HttpSession session = request.getSession();
         ProductDaoImpl productDao = new ProductDaoImpl(ConnectionManagerImpl.getInstance(config));
-        SaleDaoImpl saleDao=new SaleDaoImpl(ConnectionManagerImpl.getInstance(config));
+        SaleDaoImpl saleDao = new SaleDaoImpl(ConnectionManagerImpl.getInstance(config));
         ProductService productService = new ProductServiceImpl(productDao);
-        SaleService saleService=new SaleServiceImpl(productDao, saleDao);
+        SaleService saleService = new SaleServiceImpl(productDao, saleDao);
         ProductMapper productMapper = ProductMapperImpl.getMapper();
-        SaleMapper saleMapper= SaleMapperImpl.getMapper();
+        SaleMapper saleMapper = SaleMapperImpl.getMapper();
         ParameterValidator validator = ParameterValidator.getInstance();
-        long idProduct= Long.parseLong(request.getParameter(ProductArguments.ID_PRODUCT));
-        Product product=new Product.ProductBuilder(idProduct).build();
-        try{
-            Optional<Product>optionalProduct=productService.findProductBuId(product.getId());
-            if (optionalProduct.isPresent()){
-                List<Sale>saleList=saleService.findSalesByProduct(optionalProduct.get());
-                session.setAttribute(Attributes.PRODUCT_SALES,saleList);
+        long idProduct = Long.parseLong(request.getParameter(ProductArguments.ID_PRODUCT));
+        Product product = new Product.ProductBuilder(idProduct).build();
+        try {
+            Optional<Product> optionalProduct = productService.findProductBuId(product.getId());
+            if (optionalProduct.isPresent()) {
+                List<Sale> saleList = saleService.findSalesByProduct(optionalProduct.get());
+                session.setAttribute(Attributes.PRODUCT_SALES, saleList);
                 router.setPage(Pages.SHOW_PRODUCT_SALES);
                 router.setRedirect();
-            }else {
+            } else {
                 router.setPage(Pages.ADMIN_PAGE);
             }
-        }catch (ServiceException e){
-            throw new CommandException("Failed to show sales "+e);
+        } catch (ServiceException e) {
+            throw new CommandException("Failed to show sales " + e);
         }
         return router;
     }

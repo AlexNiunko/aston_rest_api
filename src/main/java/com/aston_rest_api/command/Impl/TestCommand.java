@@ -7,15 +7,11 @@ import com.aston_rest_api.exception.CommandException;
 import jakarta.servlet.http.HttpServletRequest;
 
 public class TestCommand implements Command {
-
-
     @Override
     public Router execute(HttpServletRequest request) throws CommandException {
-        Router router=new Router();
+        Router router = new Router();
         router.setPage(Pages.INDEX_PAGE);
         router.setRedirect();
         return router;
     }
-
-
 }

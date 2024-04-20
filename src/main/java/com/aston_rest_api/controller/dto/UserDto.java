@@ -11,6 +11,15 @@ public class UserDto {
     private String surname;
     private int isAdmin;
 
+    private UserDto(UserDtoBuilder builder) {
+        this.idUser = builder.idUser;
+        this.login = builder.login;
+        this.password = builder.password;
+        this.name = builder.name;
+        this.surname = builder.surname;
+        this.isAdmin = builder.isAdmin;
+    }
+
     public long getIdUser() {
         return idUser;
     }
@@ -59,15 +68,6 @@ public class UserDto {
         this.isAdmin = isAdmin;
     }
 
-
-    private UserDto(UserDtoBuilder builder) {
-        this.idUser = builder.idUser;
-        this.login = builder.login;
-        this.password = builder.password;
-        this.name = builder.name;
-        this.surname = builder.surname;
-        this.isAdmin = builder.isAdmin;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -126,11 +126,11 @@ public class UserDto {
             this.surname = surname;
             return this;
         }
-       public UserDtoBuilder setIsAdmin(int isAdmin) {
+
+        public UserDtoBuilder setIsAdmin(int isAdmin) {
             this.isAdmin = isAdmin;
             return this;
         }
-
 
 
         public UserDto build() {

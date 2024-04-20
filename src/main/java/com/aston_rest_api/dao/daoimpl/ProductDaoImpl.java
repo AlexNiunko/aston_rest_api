@@ -41,18 +41,18 @@ public class ProductDaoImpl extends BaseDao<Product> implements ProductDao {
                     UPDATE tool_box.products SET product_name=?,product_price=?,amount_of_product=?
                     WHERE id_product=?
                     """;
-    public static final String UPDATE_PRODUCT_DESCRIPTION_BY_ID=
+    public static final String UPDATE_PRODUCT_DESCRIPTION_BY_ID =
             """
                     UPDATE tool_box.product_descriptions SET country_of_origin=?,type_of_product=?,brand_of_product=?,issue_date=?
                      WHERE id_description=?
                     """;
-    public static final String FIND_PRODUCT_BY_ID=
+    public static final String FIND_PRODUCT_BY_ID =
             """
                     SELECT * FROM tool_box.products p JOIN tool_box.product_descriptions pd 
                     ON p.id_product=pd.product_id 
                     WHERE p.id_product=?
                     """;
-    public static final String FIND_ALL_PRODUCT_BUYERS=
+    public static final String FIND_ALL_PRODUCT_BUYERS =
             """
                     SELECT * FROM tool_box.products p JOIN tool_box.sales s ON p.id_product=s.product_id
                     JOIN tool_box.users u ON u.user_id=s.buyer_id
@@ -60,7 +60,8 @@ public class ProductDaoImpl extends BaseDao<Product> implements ProductDao {
                     """;
 
     private ConnectionManagerImpl connectionManager;
-    private ResultSetMapper resultSetMapper=ProductResultSetMapperImpl.getInstance();;
+    private ResultSetMapper resultSetMapper = ProductResultSetMapperImpl.getInstance();
+    ;
 
 
     public ProductDaoImpl(ConnectionManagerImpl connectionManager) {
@@ -71,7 +72,7 @@ public class ProductDaoImpl extends BaseDao<Product> implements ProductDao {
     @Override
     public boolean insert(Product product) throws DaoException {
         boolean result = false;
-        if (product==null){
+        if (product == null) {
             return result;
         }
         try (Connection connection = connectionManager.getConnection()) {
@@ -83,7 +84,7 @@ public class ProductDaoImpl extends BaseDao<Product> implements ProductDao {
                 productStatement.setDouble(3, product.getProductPrice());
                 productStatement.setInt(4, product.getAmount());
                 descriptionStatement.setLong(1, product.getDescription().getId());
-                descriptionStatement.setLong(2,product.getDescription().getProductID());
+                descriptionStatement.setLong(2, product.getDescription().getProductID());
                 descriptionStatement.setString(3, product.getDescription().getCountryOfOrigin());
                 descriptionStatement.setString(4, product.getDescription().getType());
                 descriptionStatement.setString(5, product.getDescription().getBrand());
@@ -92,12 +93,12 @@ public class ProductDaoImpl extends BaseDao<Product> implements ProductDao {
                 connection.commit();
             } catch (SQLException e) {
                 connection.rollback();
-                throw new DaoException("Failed to insert new product "+e);
+                throw new DaoException("Failed to insert new product " + e);
             } finally {
                 connection.setAutoCommit(true);
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to insert product "+e);
+            throw new DaoException("Failed to insert product " + e);
         }
         return result;
     }
@@ -105,7 +106,7 @@ public class ProductDaoImpl extends BaseDao<Product> implements ProductDao {
     @Override
     public boolean delete(Product product) throws DaoException {
         boolean result = false;
-        if (product==null){
+        if (product == null) {
             return result;
         }
         try (Connection connection = connectionManager.getConnection()) {
@@ -118,12 +119,12 @@ public class ProductDaoImpl extends BaseDao<Product> implements ProductDao {
                 connection.commit();
             } catch (SQLException e) {
                 connection.rollback();
-                throw new DaoException("Failed to delete product or product description "+e);
+                throw new DaoException("Failed to delete product or product description " + e);
             } finally {
                 connection.setAutoCommit(true);
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed delete product "+e);
+            throw new DaoException("Failed delete product " + e);
         }
         return result;
     }
@@ -136,41 +137,40 @@ public class ProductDaoImpl extends BaseDao<Product> implements ProductDao {
              ResultSet resultSet = statement.executeQuery()) {
             productList = resultSetMapper.mapListItems(resultSet);
         } catch (SQLException e) {
-            throw new DaoException("Failed to find all products "+e);
+            throw new DaoException("Failed to find all products " + e);
         }
         return productList;
     }
 
     @Override
     public boolean update(Product product) throws DaoException {
-        boolean result=false;
-        if (product==null){
+        boolean result = false;
+        if (product == null) {
             return result;
         }
-        try(Connection connection= connectionManager.getConnection()){
-            try(PreparedStatement statementProduct=connection.prepareStatement(UPDATE_PRODUCT_BY_ID);
-               PreparedStatement statementDescription=connection.prepareStatement(UPDATE_PRODUCT_DESCRIPTION_BY_ID)){
+        try (Connection connection = connectionManager.getConnection()) {
+            try (PreparedStatement statementProduct = connection.prepareStatement(UPDATE_PRODUCT_BY_ID);
+                 PreparedStatement statementDescription = connection.prepareStatement(UPDATE_PRODUCT_DESCRIPTION_BY_ID)) {
                 connection.setAutoCommit(false);
-               statementProduct.setString(1,product.getProductName());
-               statementProduct.setDouble(2,product.getProductPrice());
-               statementProduct.setInt(3,product.getAmount());
-               statementProduct.setLong(4,product.getId());
-               statementDescription.setString(1,product.getDescription().getCountryOfOrigin());
-               statementDescription.setString(2,product.getDescription().getType());
-               statementDescription.setString(3,product.getDescription().getBrand());
-               statementDescription.setDate(4, Date.valueOf(product.getDescription().getIssueDate()));
-               statementDescription.setLong(5,product.getDescription().getId());
-               result=(statementProduct.executeUpdate()==1) || (statementDescription.executeUpdate()==1) ;
-               connection.commit();
-            }catch (SQLException e){
+                statementProduct.setString(1, product.getProductName());
+                statementProduct.setDouble(2, product.getProductPrice());
+                statementProduct.setInt(3, product.getAmount());
+                statementProduct.setLong(4, product.getId());
+                statementDescription.setString(1, product.getDescription().getCountryOfOrigin());
+                statementDescription.setString(2, product.getDescription().getType());
+                statementDescription.setString(3, product.getDescription().getBrand());
+                statementDescription.setDate(4, Date.valueOf(product.getDescription().getIssueDate()));
+                statementDescription.setLong(5, product.getDescription().getId());
+                result = (statementProduct.executeUpdate() == 1) || (statementDescription.executeUpdate() == 1);
+                connection.commit();
+            } catch (SQLException e) {
                 connection.rollback();
-                throw new DaoException("Failed to update product "+e);
-            }
-            finally {
+                throw new DaoException("Failed to update product " + e);
+            } finally {
                 connection.setAutoCommit(true);
             }
-        }catch (SQLException e){
-            throw new DaoException("Failed to update product "+e);
+        } catch (SQLException e) {
+            throw new DaoException("Failed to update product " + e);
         }
         return result;
     }
@@ -178,40 +178,40 @@ public class ProductDaoImpl extends BaseDao<Product> implements ProductDao {
 
     @Override
     public Optional<Product> findProductById(long idProduct) throws DaoException {
-        Optional<Product>optionalProduct=Optional.empty();
-        try(Connection connection= connectionManager.getConnection();
-        PreparedStatement statement=connection.prepareStatement(FIND_PRODUCT_BY_ID)) {
-            statement.setLong(1,idProduct);
-            try(ResultSet resultSet= statement.executeQuery()) {
-             optionalProduct=resultSetMapper.mapItem(resultSet);
+        Optional<Product> optionalProduct = Optional.empty();
+        try (Connection connection = connectionManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(FIND_PRODUCT_BY_ID)) {
+            statement.setLong(1, idProduct);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                optionalProduct = resultSetMapper.mapItem(resultSet);
             }
-        }catch (SQLException e){
-            throw new DaoException("Failed to find product by id "+e);
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find product by id " + e);
         }
         return optionalProduct;
     }
 
     @Override
     public Optional<Product> findProductBuyers(Product product) throws DaoException {
-        Optional<Product>optionalProduct=Optional.empty();
-        if (product==null){
+        Optional<Product> optionalProduct = Optional.empty();
+        if (product == null) {
             return optionalProduct;
         }
-        List<User>buyers;
-        long productId= product.getId();
-        try(Connection connection= connectionManager.getConnection();
-        PreparedStatement statement=connection.prepareStatement(FIND_ALL_PRODUCT_BUYERS) ){
-            statement.setLong(1,product.getId());
-            try(ResultSet resultSet= statement.executeQuery()){
-                ListResultSetMapper<User>listResultSetMapper=(ListResultSetMapper<User>)resultSetMapper;
-                buyers=listResultSetMapper.mapItemEntities(resultSet);
+        List<User> buyers;
+        long productId = product.getId();
+        try (Connection connection = connectionManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(FIND_ALL_PRODUCT_BUYERS)) {
+            statement.setLong(1, product.getId());
+            try (ResultSet resultSet = statement.executeQuery()) {
+                ListResultSetMapper<User> listResultSetMapper = (ListResultSetMapper<User>) resultSetMapper;
+                buyers = listResultSetMapper.mapItemEntities(resultSet);
                 product.setBuyers(buyers);
             }
-        }catch (SQLException e){
-            throw new DaoException("Failed to find product buyers "+e);
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find product buyers " + e);
         }
         product.setBuyers(buyers);
-        optionalProduct=Optional.ofNullable(product);
+        optionalProduct = Optional.ofNullable(product);
         return optionalProduct;
     }
 }

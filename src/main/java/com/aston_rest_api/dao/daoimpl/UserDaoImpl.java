@@ -43,7 +43,7 @@ public class UserDaoImpl extends BaseDao<User> implements com.aston_rest_api.dao
             "UPDATE tool_box.users SET login=?,password=?,name=?,surname=? WHERE user_id=?";
 
 
-    private ResultSetMapper<User> resultSetMapper=UserResultSetMapperImpl.getInstance();
+    private ResultSetMapper<User> resultSetMapper = UserResultSetMapperImpl.getInstance();
 
     private ConnectionManagerImpl connectionManager;
 
@@ -54,7 +54,7 @@ public class UserDaoImpl extends BaseDao<User> implements com.aston_rest_api.dao
     @Override
     public boolean insert(User user) throws DaoException {
         boolean result = false;
-        if (user==null){
+        if (user == null) {
             return result;
         }
         try (Connection connection = connectionManager.getConnection();
@@ -67,7 +67,7 @@ public class UserDaoImpl extends BaseDao<User> implements com.aston_rest_api.dao
             statement.setInt(6, user.getUsersRole());
             result = statement.executeUpdate() == 1;
         } catch (SQLException e) {
-            throw new DaoException("Failed to insert user "+e);
+            throw new DaoException("Failed to insert user " + e);
         }
         return result;
     }
@@ -75,7 +75,7 @@ public class UserDaoImpl extends BaseDao<User> implements com.aston_rest_api.dao
     @Override
     public boolean delete(User user) throws DaoException {
         boolean result = false;
-        if (user==null){
+        if (user == null) {
             return result;
         }
         try (Connection connection = connectionManager.getConnection();
@@ -83,7 +83,7 @@ public class UserDaoImpl extends BaseDao<User> implements com.aston_rest_api.dao
             statement.setLong(1, user.getId());
             result = statement.executeUpdate() == 1;
         } catch (SQLException | RuntimeException e) {
-            throw new DaoException("Failed to delete user "+e);
+            throw new DaoException("Failed to delete user " + e);
         }
         return result;
     }
@@ -96,7 +96,7 @@ public class UserDaoImpl extends BaseDao<User> implements com.aston_rest_api.dao
             ResultSet resultSet = statement.executeQuery();
             userList = resultSetMapper.mapListItems(resultSet);
         } catch (SQLException | RuntimeException e) {
-            throw new DaoException("Failed to select list of uses "+e);
+            throw new DaoException("Failed to select list of uses " + e);
         }
         return userList;
     }
@@ -104,7 +104,7 @@ public class UserDaoImpl extends BaseDao<User> implements com.aston_rest_api.dao
     @Override
     public boolean update(User user) throws DaoException {
         boolean result = false;
-        if (user==null){
+        if (user == null) {
             return result;
         }
         try (Connection connection = connectionManager.getConnection();
@@ -113,10 +113,10 @@ public class UserDaoImpl extends BaseDao<User> implements com.aston_rest_api.dao
             statement.setString(2, user.getPassword());
             statement.setString(3, user.getName());
             statement.setString(4, user.getSurname());
-            statement.setLong(5,user.getId());
+            statement.setLong(5, user.getId());
             result = statement.executeUpdate() == 1;
         } catch (SQLException | RuntimeException e) {
-            throw new DaoException("Failed update user "+e);
+            throw new DaoException("Failed update user " + e);
         }
         return result;
     }
@@ -124,7 +124,7 @@ public class UserDaoImpl extends BaseDao<User> implements com.aston_rest_api.dao
     @Override
     public Optional<User> findUserByLoginAndPassword(User user) throws DaoException {
         Optional<User> optionalUser = Optional.empty();
-        if (user==null){
+        if (user == null) {
             return optionalUser;
         }
         String login = user.getLogin();
@@ -138,7 +138,7 @@ public class UserDaoImpl extends BaseDao<User> implements com.aston_rest_api.dao
                 optionalUser = resultSetMapper.mapItem(resultSet);
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to find user  login and password "+e);
+            throw new DaoException("Failed to find user  login and password " + e);
         }
         return optionalUser;
     }
@@ -146,12 +146,12 @@ public class UserDaoImpl extends BaseDao<User> implements com.aston_rest_api.dao
     @Override
     public Optional<User> findUserPurchases(User user) throws DaoException {
         Optional<User> optionalUser = Optional.empty();
-        if (user==null){
+        if (user == null) {
             return optionalUser;
         }
         List<Product> purchases;
         long userId = user.getId();
-        ListResultSetMapper<Product>listResultSetMapper=(ListResultSetMapper)resultSetMapper;
+        ListResultSetMapper<Product> listResultSetMapper = (ListResultSetMapper) resultSetMapper;
         try (Connection connection = connectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(FIND_ALL_USER_PURCHASES);
         ) {
@@ -161,7 +161,7 @@ public class UserDaoImpl extends BaseDao<User> implements com.aston_rest_api.dao
                 purchases = listResultSetMapper.mapItemEntities(resultSet);
             }
         } catch (SQLException | RuntimeException e) {
-            throw new DaoException("Failed to find user purchases "+e);
+            throw new DaoException("Failed to find user purchases " + e);
         }
         user.setPurchases(purchases);
         optionalUser = Optional.ofNullable(user);

@@ -24,13 +24,13 @@ import jakarta.servlet.http.HttpSession;
 
 import java.util.Optional;
 
-public class UpdateProductCommand  implements Command {
+public class UpdateProductCommand implements Command {
     private HikariDataSource config;
-
 
     public UpdateProductCommand(HikariDataSource config) {
         this.config = config;
     }
+
     @Override
     public Router execute(HttpServletRequest request) throws CommandException {
         Router router = new Router();
@@ -38,7 +38,7 @@ public class UpdateProductCommand  implements Command {
         ProductService productService = new ProductServiceImpl(productDao);
         ProductMapper mapper = ProductMapperImpl.getMapper();
         ParameterValidator validator = ParameterValidator.getInstance();
-        long idProduct= Long.parseLong(request.getParameter(ProductArguments.ID_PRODUCT));
+        long idProduct = Long.parseLong(request.getParameter(ProductArguments.ID_PRODUCT));
         String productName = request.getParameter(ProductArguments.PRODUCT_NAME);
         String productPrice = request.getParameter(ProductArguments.PRODUCT_PRICE);
         String amountOfProduct = request.getParameter(ProductArguments.AMOUNT_OF_PRODUCT);
@@ -46,38 +46,38 @@ public class UpdateProductCommand  implements Command {
         String typeOfProduct = request.getParameter(ProductDescriptionArguments.TYPE_OF_PRODUCT);
         String brandOfProduct = request.getParameter(ProductDescriptionArguments.BRAND_OF_PRODUCT);
         String issueDate = request.getParameter(ProductDescriptionArguments.ISSUE_DATE);
-        try{
-            Product product=new Product.ProductBuilder(idProduct).build();
-            Optional<Product>optionalProduct=productService.findProductBuId(product.getId());
-                if (optionalProduct.isPresent()  && validator.validateNumber(productPrice) && validator.validateNumber(amountOfProduct)
-                        && validator.validateNameOrSurname(countryOfOrigin) && validator.validateNameOrSurname(typeOfProduct)
-                        && validator.validateNameOrSurname(brandOfProduct)
-                        && validator.validateDate(issueDate)){
-                    ProductDto productDto = new ProductDto.ProductDtoBuilder(idProduct)
-                            .setProductName(productName)
-                            .setProductPrice(productPrice)
-                            .setProductAmount(amountOfProduct)
-                            .build();
-                    ProductDescriptionDto descriptionDto = new ProductDescriptionDto.ProductDescriptionBuilder(optionalProduct.get().getId())
-                            .setIdProduct(idProduct)
-                            .setCountryOfOrigin(countryOfOrigin)
-                            .setBrand(brandOfProduct)
-                            .setType(typeOfProduct)
-                            .setIssueDate(issueDate)
-                            .build();
-                    productDto.setDescription(descriptionDto);
-                    Product productToUpdate= mapper.map(productDto);
-                    if (productService.updateProduct(productToUpdate)) {
-                        router.setPage(Pages.ADMIN_PAGE);
-                        router.setRedirect();
-                    } else {
-                        router.setPage(Pages.UPDATE_PRODUCT_PAGE);
-                    }
-                }else {
+        try {
+            Product product = new Product.ProductBuilder(idProduct).build();
+            Optional<Product> optionalProduct = productService.findProductBuId(product.getId());
+            if (optionalProduct.isPresent() && validator.validateNumber(productPrice) && validator.validateNumber(amountOfProduct)
+                    && validator.validateNameOrSurname(countryOfOrigin) && validator.validateNameOrSurname(typeOfProduct)
+                    && validator.validateNameOrSurname(brandOfProduct)
+                    && validator.validateDate(issueDate)) {
+                ProductDto productDto = new ProductDto.ProductDtoBuilder(idProduct)
+                        .setProductName(productName)
+                        .setProductPrice(productPrice)
+                        .setProductAmount(amountOfProduct)
+                        .build();
+                ProductDescriptionDto descriptionDto = new ProductDescriptionDto.ProductDescriptionBuilder(optionalProduct.get().getId())
+                        .setIdProduct(idProduct)
+                        .setCountryOfOrigin(countryOfOrigin)
+                        .setBrand(brandOfProduct)
+                        .setType(typeOfProduct)
+                        .setIssueDate(issueDate)
+                        .build();
+                productDto.setDescription(descriptionDto);
+                Product productToUpdate = mapper.map(productDto);
+                if (productService.updateProduct(productToUpdate)) {
+                    router.setPage(Pages.ADMIN_PAGE);
+                    router.setRedirect();
+                } else {
                     router.setPage(Pages.UPDATE_PRODUCT_PAGE);
                 }
-        }catch (ServiceException e){
-            throw new CommandException("Failed to update product "+e);
+            } else {
+                router.setPage(Pages.UPDATE_PRODUCT_PAGE);
+            }
+        } catch (ServiceException e) {
+            throw new CommandException("Failed to update product " + e);
         }
         return router;
     }

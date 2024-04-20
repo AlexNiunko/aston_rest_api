@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class Product extends AbstractEntity {
+public class Product {
+     private long id;
      private String productName;
      private double productPrice;
      private int amount;
@@ -12,7 +13,7 @@ public class Product extends AbstractEntity {
      private List<User> buyers;
 
      private Product(ProductBuilder builder) {
-          super(builder.idProduct);
+          this.id= builder.idProduct;
           this.productName = builder.productName;
           this.productPrice = builder.productPrice;
           this.amount = builder.amount;
@@ -46,6 +47,14 @@ public class Product extends AbstractEntity {
 
      public ProductDescription getDescription() {
           return description;
+     }
+
+     public long getId() {
+          return id;
+     }
+
+     public void setId(long id) {
+          this.id = id;
      }
 
      public void setDescription(ProductDescription description) {

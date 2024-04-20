@@ -2,13 +2,22 @@ package com.aston_rest_api.controller.dto;
 
 import java.util.Objects;
 
-public class ProductDescriptionDto  {
+public class ProductDescriptionDto {
     private long idDescription;
     private long idProduct;
     private String countryOfOrigin;
     private String type;
     private String brand;
     private String issueDate;
+
+    private ProductDescriptionDto(ProductDescriptionBuilder builder) {
+        this.idDescription = builder.idDescription;
+        this.idProduct = builder.idProduct;
+        this.countryOfOrigin = builder.countryOfOrigin;
+        this.type = builder.type;
+        this.brand = builder.brand;
+        this.issueDate = builder.issueDate;
+    }
 
     public long getIdDescription() {
         return idDescription;
@@ -58,15 +67,6 @@ public class ProductDescriptionDto  {
         this.issueDate = issueDate;
     }
 
-    public ProductDescriptionDto(ProductDescriptionBuilder builder) {
-        this.idDescription= builder.idDescription;
-        this.idProduct = builder.idProduct;
-        this.countryOfOrigin = builder.countryOfOrigin;
-        this.type = builder.type;
-        this.brand = builder.brand;
-        this.issueDate = builder.issueDate;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -93,7 +93,7 @@ public class ProductDescriptionDto  {
         return sb.toString();
     }
 
-    public static class ProductDescriptionBuilder{
+    public static class ProductDescriptionBuilder {
         private long idDescription;
         private long idProduct;
         private String countryOfOrigin;
@@ -104,6 +104,7 @@ public class ProductDescriptionDto  {
         public ProductDescriptionBuilder(long idDescription) {
             this.idDescription = idDescription;
         }
+
         public ProductDescriptionBuilder setIdProduct(long idProduct) {
             this.idProduct = idProduct;
             return this;
@@ -128,13 +129,11 @@ public class ProductDescriptionDto  {
             this.issueDate = issueDate;
             return this;
         }
-        public  ProductDescriptionDto build(){
+
+        public ProductDescriptionDto build() {
             return new ProductDescriptionDto(this);
         }
     }
-
-
-
 
 
 }

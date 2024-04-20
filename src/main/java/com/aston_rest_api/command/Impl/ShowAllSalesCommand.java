@@ -37,28 +37,30 @@ import java.util.UUID;
 
 public class ShowAllSalesCommand implements Command {
     private HikariDataSource config;
+
     public ShowAllSalesCommand(HikariDataSource config) {
-        this.config=config;
+        this.config = config;
     }
+
     @Override
     public Router execute(HttpServletRequest request) throws CommandException {
-        Router router=new Router();
-        HttpSession session= request.getSession();
-        SaleMapper saleMapper= SaleMapperImpl.getMapper();
-        ProductDaoImpl productDao=new ProductDaoImpl(ConnectionManagerImpl.getInstance(config));
-        SaleDaoImpl saleDao=new SaleDaoImpl(ConnectionManagerImpl.getInstance(config));
-        UserMapper userMapper= UserMapperImpl.getMapper();
-        SaleService saleService=new SaleServiceImpl(productDao,saleDao);
-        try{
-            List<Sale>saleList=saleService.findAllSales();
-            List<SaleDto>saleDtos=new ArrayList<>();
-            for (Sale sale:saleList) {
+        Router router = new Router();
+        HttpSession session = request.getSession();
+        SaleMapper saleMapper = SaleMapperImpl.getMapper();
+        ProductDaoImpl productDao = new ProductDaoImpl(ConnectionManagerImpl.getInstance(config));
+        SaleDaoImpl saleDao = new SaleDaoImpl(ConnectionManagerImpl.getInstance(config));
+        UserMapper userMapper = UserMapperImpl.getMapper();
+        SaleService saleService = new SaleServiceImpl(productDao, saleDao);
+        try {
+            List<Sale> saleList = saleService.findAllSales();
+            List<SaleDto> saleDtos = new ArrayList<>();
+            for (Sale sale : saleList) {
                 saleDtos.add(saleMapper.map(sale));
             }
-            session.setAttribute(Attributes.SALES,saleDtos);
+            session.setAttribute(Attributes.SALES, saleDtos);
             router.setPage(Pages.SALES_PAGE);
-        }catch (ServiceException e){
-            throw new CommandException("Failed buy product "+e);
+        } catch (ServiceException e) {
+            throw new CommandException("Failed buy product " + e);
         }
         return router;
     }

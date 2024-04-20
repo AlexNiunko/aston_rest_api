@@ -18,9 +18,8 @@ public class ConnectionManagerImpl implements ConnectionManager {
     private static ConnectionManagerImpl connectionInstance;
     private static AtomicBoolean isInitialized = new AtomicBoolean(false);
 
-
     private ConnectionManagerImpl(HikariDataSource dataSource) {
-        this.dataSource=dataSource;
+        this.dataSource = dataSource;
     }
 
     public static ConnectionManagerImpl getInstance(HikariDataSource dataSource) {

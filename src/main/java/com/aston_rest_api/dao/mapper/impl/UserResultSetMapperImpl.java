@@ -17,7 +17,7 @@ import java.util.*;
 
 public class UserResultSetMapperImpl implements ResultSetMapper<User>, ListResultSetMapper<Product> {
 
-    private static UserResultSetMapperImpl instance=new UserResultSetMapperImpl();
+    private static UserResultSetMapperImpl instance = new UserResultSetMapperImpl();
 
     private UserResultSetMapperImpl() {
     }
@@ -54,7 +54,7 @@ public class UserResultSetMapperImpl implements ResultSetMapper<User>, ListResul
     public Optional<User> mapItem(ResultSet resultSet) throws SQLException {
         Optional<User> optionalUser = Optional.empty();
         List<Product> purchases = new ArrayList<>();
-           if (resultSet.next()) {
+        if (resultSet.next()) {
             optionalUser = getOptionalUser(resultSet, purchases);
         }
         return optionalUser;
@@ -62,14 +62,14 @@ public class UserResultSetMapperImpl implements ResultSetMapper<User>, ListResul
 
     @Override
     public List<User> mapListItems(ResultSet resultSet) throws SQLException {
-        List<User>userList=new ArrayList<>();
+        List<User> userList = new ArrayList<>();
         Optional<User> optionalUser = Optional.empty();
         List<Product> purchases = new ArrayList<>();
-        while (resultSet.next()){
-            optionalUser=getOptionalUser(resultSet,purchases);
+        while (resultSet.next()) {
+            optionalUser = getOptionalUser(resultSet, purchases);
             optionalUser.ifPresent(userList::add);
         }
-            return userList;
+        return userList;
     }
 
 

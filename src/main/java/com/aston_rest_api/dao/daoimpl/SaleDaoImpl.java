@@ -30,14 +30,14 @@ public class SaleDaoImpl extends BaseDao<Sale> implements SaleDao {
                     """;
     public static final String UPDATE_SALE_BY_ID =
             "UPDATE tool_box.sales SET date_of_sale=?,amount_of_sale=?  WHERE id_sale=?";
-    public static final String FIND_SALES_BY_DATE=
+    public static final String FIND_SALES_BY_DATE =
             """
                     SELECT * FROM tool_box.sales s JOIN tool_box.products p 
                     ON s.product_id=p.id_product JOIN tool_box.product_descriptions pd
                     ON pd.product_id=p.id_product WHERE s.date_of_sale=?
-                   
+                                       
                      """;
-    public static final String FIND_SALES_BY_PRODUCT=
+    public static final String FIND_SALES_BY_PRODUCT =
             """
                     SELECT * FROM tool_box.sales s JOIN tool_box.products p 
                     ON s.product_id=p.id_product JOIN tool_box.product_descriptions pd
@@ -46,9 +46,9 @@ public class SaleDaoImpl extends BaseDao<Sale> implements SaleDao {
 
 
     private ConnectionManagerImpl connectionManager;
-    private ResultSetMapper resultSetMapper=SaleResultSetMapperImpl.getInstance();
+    private ResultSetMapper resultSetMapper = SaleResultSetMapperImpl.getInstance();
 
-    public SaleDaoImpl(ConnectionManagerImpl connectionManager ) {
+    public SaleDaoImpl(ConnectionManagerImpl connectionManager) {
         this.connectionManager = connectionManager;
     }
 
@@ -56,7 +56,7 @@ public class SaleDaoImpl extends BaseDao<Sale> implements SaleDao {
     @Override
     public boolean insert(Sale sale) throws DaoException {
         boolean result = false;
-        if (sale==null){
+        if (sale == null) {
             return result;
         }
         try (Connection connection = connectionManager.getConnection()) {
@@ -75,12 +75,12 @@ public class SaleDaoImpl extends BaseDao<Sale> implements SaleDao {
                 connection.commit();
             } catch (SQLException e) {
                 connection.rollback();
-                throw new DaoException("Failed to insert a new sale "+e);
+                throw new DaoException("Failed to insert a new sale " + e);
             } finally {
                 connection.setAutoCommit(true);
             }
         } catch (SQLException e) {
-            throw new DaoException("Failed to add new sale "+e);
+            throw new DaoException("Failed to add new sale " + e);
         }
         return result;
     }
@@ -88,7 +88,7 @@ public class SaleDaoImpl extends BaseDao<Sale> implements SaleDao {
     @Override
     public boolean delete(Sale sale) throws DaoException {
         boolean result = false;
-        if (sale==null){
+        if (sale == null) {
             return result;
         }
         try (Connection connection = connectionManager.getConnection();
@@ -96,7 +96,7 @@ public class SaleDaoImpl extends BaseDao<Sale> implements SaleDao {
             statement.setLong(1, sale.getId());
             result = statement.executeUpdate() == 1;
         } catch (SQLException e) {
-            throw new DaoException("Failed to delete sale "+e);
+            throw new DaoException("Failed to delete sale " + e);
         }
         return result;
     }
@@ -109,61 +109,61 @@ public class SaleDaoImpl extends BaseDao<Sale> implements SaleDao {
              ResultSet resultSet = statement.executeQuery()) {
             sales = resultSetMapper.mapListItems(resultSet);
         } catch (SQLException e) {
-            throw new DaoException("Failed to find All sales "+e);
+            throw new DaoException("Failed to find All sales " + e);
         }
         return sales;
     }
 
     @Override
     public boolean update(Sale sale) throws DaoException {
-        boolean result=false;
-        if (sale==null){
+        boolean result = false;
+        if (sale == null) {
             return result;
         }
-        try(Connection connection= connectionManager.getConnection();
-        PreparedStatement statement=connection.prepareStatement(UPDATE_SALE_BY_ID)){
+        try (Connection connection = connectionManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(UPDATE_SALE_BY_ID)) {
             statement.setDate(1, Date.valueOf(sale.getDateOfSale()));
-            statement.setInt(2,sale.getAmountSale());
-            statement.setLong(3,sale.getId());
-            result=statement.executeUpdate()==1;
-        }catch (SQLException e){
-            throw new DaoException("Failed to update "+e);
+            statement.setInt(2, sale.getAmountSale());
+            statement.setLong(3, sale.getId());
+            result = statement.executeUpdate() == 1;
+        } catch (SQLException e) {
+            throw new DaoException("Failed to update " + e);
         }
         return result;
     }
 
     @Override
     public List<Sale> findSalesByDate(LocalDate dateTime) throws DaoException {
-        List<Sale>sales=new ArrayList<>();
-        if (dateTime==null){
+        List<Sale> sales = new ArrayList<>();
+        if (dateTime == null) {
             return sales;
         }
-        try(Connection connection= connectionManager.getConnection();
-        PreparedStatement statement=connection.prepareStatement(FIND_SALES_BY_DATE)){
+        try (Connection connection = connectionManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(FIND_SALES_BY_DATE)) {
             statement.setDate(1, Date.valueOf(dateTime.toString()));
-            try(ResultSet resultSet= statement.executeQuery()){
-                sales=resultSetMapper.mapListItems(resultSet);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                sales = resultSetMapper.mapListItems(resultSet);
             }
-        }catch (SQLException e){
-            throw new DaoException("Failed to find sales by date "+e);
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find sales by date " + e);
         }
         return sales;
     }
 
     @Override
     public List<Sale> findSalesByProduct(Product product) throws DaoException {
-        List<Sale>sales=new ArrayList<>();
-        if (product==null){
+        List<Sale> sales = new ArrayList<>();
+        if (product == null) {
             return sales;
         }
-        try(Connection connection= connectionManager.getConnection();
-            PreparedStatement statement=connection.prepareStatement(FIND_SALES_BY_PRODUCT)){
-            statement.setLong(1,product.getId());
-            try(ResultSet resultSet= statement.executeQuery()){
-                sales=resultSetMapper.mapListItems(resultSet);
+        try (Connection connection = connectionManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(FIND_SALES_BY_PRODUCT)) {
+            statement.setLong(1, product.getId());
+            try (ResultSet resultSet = statement.executeQuery()) {
+                sales = resultSetMapper.mapListItems(resultSet);
             }
-        }catch (SQLException e){
-            throw new DaoException("Failed to find sale product "+e);
+        } catch (SQLException e) {
+            throw new DaoException("Failed to find sale product " + e);
         }
         return sales;
     }

@@ -23,14 +23,12 @@ import jakarta.servlet.http.HttpSession;
 
 import java.util.UUID;
 
-public class UpdateProfileCommand  implements Command {
-
+public class UpdateProfileCommand implements Command {
     private HikariDataSource config;
 
     public UpdateProfileCommand(HikariDataSource config) {
         this.config = config;
     }
-
 
     @Override
     public Router execute(HttpServletRequest request) throws CommandException {

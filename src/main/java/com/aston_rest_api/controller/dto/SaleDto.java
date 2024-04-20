@@ -11,6 +11,14 @@ public class SaleDto {
     private String dateOfSale;
     private String amountOfSale;
 
+    private SaleDto(SaleDtoBuilder saleDtoBuilder) {
+        this.saleId = saleDtoBuilder.saleId;
+        this.buyerId = saleDtoBuilder.buyerId;
+        this.productId = saleDtoBuilder.productId;
+        this.dateOfSale = saleDtoBuilder.dateOfSale;
+        this.amountOfSale = saleDtoBuilder.amountOfSale;
+    }
+
     public long getSaleId() {
         return saleId;
     }
@@ -49,14 +57,6 @@ public class SaleDto {
 
     public void setAmountOfSale(String amountOfSale) {
         this.amountOfSale = amountOfSale;
-    }
-
-    public SaleDto(SaleDtoBuilder saleDtoBuilder) {
-        this.saleId = saleDtoBuilder.saleId;
-        this.buyerId = saleDtoBuilder.buyerId;
-        this.productId = saleDtoBuilder.productId;
-        this.dateOfSale = saleDtoBuilder.dateOfSale;
-        this.amountOfSale = saleDtoBuilder.amountOfSale;
     }
 
     @Override

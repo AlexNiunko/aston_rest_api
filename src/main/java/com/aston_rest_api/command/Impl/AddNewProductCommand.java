@@ -27,10 +27,8 @@ import jakarta.servlet.http.HttpSession;
 
 import java.util.UUID;
 
-public class AddNewProductCommand  implements Command {
+public class AddNewProductCommand implements Command {
     private HikariDataSource config;
-
-
 
     public AddNewProductCommand(HikariDataSource config) {
         this.config = config;
