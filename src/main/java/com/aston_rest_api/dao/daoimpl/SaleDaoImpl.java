@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SaleDaoImpl extends BaseDao<Sale> implements SaleDao {
+public class SaleDaoImpl implements BaseDao<Sale>,SaleDao {
 
     public static final String INSERT_SALE =
             "INSERT INTO tool_box.sales (id_sale,buyer_id,product_id,date_of_sale,amount_of_sale) VALUES (?,?,?,?,?)";

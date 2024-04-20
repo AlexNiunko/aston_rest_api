@@ -5,6 +5,7 @@ import com.aston_rest_api.db.ConnectionManagerImpl;
 import com.aston_rest_api.exception.DaoException;
 import com.aston_rest_api.model.Product;
 import com.aston_rest_api.model.ProductDescription;
+import com.aston_rest_api.model.Sale;
 import com.aston_rest_api.model.User;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.jupiter.api.*;
@@ -14,10 +15,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,6 +28,31 @@ class ProductDaoImplTest {
 
     private static List<User> buyers = new ArrayList<>();
     private static List<Product> productList = new ArrayList<>();
+    private static List<Sale>orders=new ArrayList<>();
+    private static ProductDescription description=new ProductDescription.ProductDescriptionBuilder(1)
+            .setProductId(1)
+            .setCountryOfOrigin("China")
+            .setType("hand tool")
+            .setBrand("Makita")
+            .setIssueDate(LocalDate.of(2024,8,02))
+            .build();
+
+    private static Sale sale1=new Sale.SaleBuilder(1)
+            .setBuyerId(1)
+            .setProductId(1)
+            .setDateOfSale(LocalDate.of(2024,4,8))
+            .setAmountSale(1)
+            .build();
+    private static Sale sale2=new Sale.SaleBuilder(2)
+            .setBuyerId(1)
+            .setProductId(1)
+            .setDateOfSale(LocalDate.of(2024,3,25))
+            .setAmountSale(1)
+            .build();
+
+
+
+
 
 
     private static PostgreSQLContainer container = (PostgreSQLContainer) new PostgreSQLContainer("postgres:10-alpine")
@@ -137,9 +160,49 @@ class ProductDaoImplTest {
         Product product=new Product.ProductBuilder().build();
         Assertions.assertFalse(productDao.findProductById(product.getId()).isPresent());
     }
-
     @Test
     @Order(7)
+    void successfulFindAllProductOrders() throws DaoException{
+        product = new Product.ProductBuilder(1)
+                .setProductName("hammer")
+                .setProductPrice(10.25)
+                .setAmount(5)
+                .build();
+        product.setDescription(description);
+        orders.add(sale1);
+        orders.add(sale2);
+        Optional<Product>productOptional=productDao.findAllProductOrders(product);
+        Assertions.assertAll(
+                ()->assertTrue(productOptional.isPresent()),
+                ()->assertEquals(orders,productOptional.get().getOrders())
+        );
+    }
+    @Test
+    @Order(8)
+    void unsuccessfulFindAllProductOrders() throws DaoException{
+        product = new Product.ProductBuilder(10)
+                .setProductName("hammer")
+                .setProductPrice(10.25)
+                .setAmount(5)
+                .build();
+        product.setDescription(description);
+        orders.add(sale1);
+        orders.add(sale2);
+        Optional<Product>productOptional=productDao.findAllProductOrders(product);
+        Assertions.assertNotEquals(orders,productOptional.get().getOrders());
+    }
+    @Test
+    @Order(9)
+    void FindAllProductOrdersIfNull() throws DaoException{
+        product = null;
+        orders.add(sale1);
+        orders.add(sale2);
+        Optional<Product>productOptional=productDao.findAllProductOrders(product);
+        Assertions.assertTrue(productOptional.isEmpty());
+    }
+
+    @Test
+    @Order(10)
     void successfulUpdate() throws DaoException {
         Product product = new Product.ProductBuilder(1)
                 .setProductName("other")
@@ -158,7 +221,7 @@ class ProductDaoImplTest {
         Assertions.assertTrue(productDao.update(product));
     }
     @Test
-    @Order(8)
+    @Order(11)
     void unsuccessfulUpdate() throws DaoException {
         Product product = new Product.ProductBuilder(10)
                 .setProductName("other")
@@ -178,7 +241,7 @@ class ProductDaoImplTest {
     }
 
     @Test
-    @Order(9)
+    @Order(12)
     void successfulInsert() throws DaoException {
         Product product = new Product.ProductBuilder(100)
                 .setProductName("new product")
@@ -197,7 +260,7 @@ class ProductDaoImplTest {
         Assertions.assertTrue(productDao.insert(product));
     }
     @Test
-    @Order(10)
+    @Order(13)
     void unsuccessfulInsert() throws DaoException {
         Product product = new Product.ProductBuilder(110)
                 .setProductName("new")
@@ -218,7 +281,7 @@ class ProductDaoImplTest {
     }
 
     @Test
-    @Order(11)
+    @Order(14)
     void successfulDelete() throws DaoException {
         Product product = new Product.ProductBuilder(1)
                 .build();
@@ -230,7 +293,7 @@ class ProductDaoImplTest {
         Assertions.assertTrue(productDao.delete(product));
     }
     @Test
-    @Order(12)
+    @Order(15)
     void unsuccessfulDelete() throws DaoException {
         Product product = new Product.ProductBuilder(19)
                 .build();
@@ -242,32 +305,33 @@ class ProductDaoImplTest {
         Assertions.assertFalse(productDao.delete(product));
     }
     @Test
-    @Order(13)
+    @Order(16)
     void deleteIfProductNull() throws DaoException {
         product=null;
         Assertions.assertFalse(productDao.delete(product));
     }
     @Test
-    @Order(14)
+    @Order(17)
     void updateIfProductNull() throws DaoException {
         product=null;
         Assertions.assertFalse(productDao.update(product));
     }
     @Test
-    @Order(15)
+    @Order(18)
     void insertIfProductNull() throws DaoException {
         product=null;
         Assertions.assertFalse(productDao.insert(product));
     }
     @Test
-    @Order(16)
+    @Order(19)
     void findIfProductNull() throws DaoException {
         Assertions.assertFalse(productDao.findProductById(0).isPresent());
     }
     @Test
-    @Order(17)
+    @Order(20)
     void findBuyersIfProductNull() throws DaoException {
         product=null;
         Assertions.assertFalse(productDao.findProductBuyers(product).isPresent());
     }
+
 }

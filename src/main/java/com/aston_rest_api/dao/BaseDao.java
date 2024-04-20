@@ -6,10 +6,10 @@ import com.aston_rest_api.model.Sale;
 import java.time.LocalDate;
 import java.util.List;
 
-public abstract class BaseDao<T> {
-    public abstract boolean insert(T t) throws DaoException;
-    public abstract boolean delete (T t) throws DaoException;
-    public abstract List<T> findAll() throws DaoException;
-    public abstract boolean update(T t) throws DaoException;
+public interface BaseDao<T> {
+    boolean insert(T t) throws DaoException;
+     boolean delete (T t) throws DaoException;
+     List<T> findAll() throws DaoException;
+     boolean update(T t) throws DaoException;
 
 }

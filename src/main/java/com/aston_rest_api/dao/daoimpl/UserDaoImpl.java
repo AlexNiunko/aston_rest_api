@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class UserDaoImpl extends BaseDao<User> implements com.aston_rest_api.dao.UserDao {
+public class UserDaoImpl implements BaseDao<User> , com.aston_rest_api.dao.UserDao {
     public static final String FIND_USER_BY_LOGIN_AND_PASSWORD =
             "SELECT * FROM tool_box.users u WHERE u.password=? and u.login=? ";
     public static final String FIND_ALL_USER_PURCHASES =

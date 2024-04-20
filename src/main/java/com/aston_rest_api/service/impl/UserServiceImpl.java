@@ -1,5 +1,7 @@
 package com.aston_rest_api.service.impl;
 
+import com.aston_rest_api.dao.BaseDao;
+import com.aston_rest_api.dao.UserDao;
 import com.aston_rest_api.dao.daoimpl.UserDaoImpl;
 import com.aston_rest_api.exception.DaoException;
 import com.aston_rest_api.exception.ServiceException;
@@ -16,7 +18,7 @@ import java.util.Optional;
 
 public class UserServiceImpl implements UserService {
 
-    private UserDaoImpl userDao;
+    private BaseDao userDao;
 
     public UserServiceImpl(UserDaoImpl userDao) {
         this.userDao = userDao;
@@ -28,8 +30,9 @@ public class UserServiceImpl implements UserService {
         if (user==null){
             return optionalUser;
         }
+        UserDao dao=(UserDao) userDao;
         try {
-            optionalUser=userDao.findUserByLoginAndPassword(user);
+            optionalUser=dao.findUserByLoginAndPassword(user);
         } catch (DaoException e) {
             throw new ServiceException("Failed to authenticate user "+e);
         }
@@ -56,8 +59,9 @@ public class UserServiceImpl implements UserService {
         if (user==null){
             return list;
         }
+        UserDao dao=(UserDao) userDao;
         try {
-            Optional<User>optionalUser=userDao.findUserPurchases(user);
+            Optional<User>optionalUser=dao.findUserPurchases(user);
             if (optionalUser.isPresent()){
                 list=  optionalUser.get().getPurchases();
             }

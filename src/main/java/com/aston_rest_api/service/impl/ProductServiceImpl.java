@@ -1,6 +1,7 @@
 package com.aston_rest_api.service.impl;
 
-import com.aston_rest_api.dao.daoimpl.ProductDaoImpl;
+import com.aston_rest_api.dao.BaseDao;
+import com.aston_rest_api.dao.ProductDao;
 import com.aston_rest_api.exception.DaoException;
 import com.aston_rest_api.exception.ServiceException;
 import com.aston_rest_api.model.Product;
@@ -11,9 +12,9 @@ import java.util.*;
 
 public class ProductServiceImpl implements ProductService {
 
-    private ProductDaoImpl productDao;
+    private BaseDao productDao;
 
-    public ProductServiceImpl(ProductDaoImpl productDao) {
+    public ProductServiceImpl(BaseDao productDao) {
         this.productDao = productDao;
     }
 
@@ -73,8 +74,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Optional<Product> findProductBuId(long idProduct) throws ServiceException {
         Optional<Product> optionalProduct = Optional.empty();
+        ProductDao dao = (ProductDao) productDao;
         try {
-            optionalProduct = productDao.findProductById(idProduct);
+            optionalProduct = dao.findProductById(idProduct);
         } catch (DaoException e) {
             throw new ServiceException("Failed to find product with Id" + e);
         }
@@ -87,8 +89,9 @@ public class ProductServiceImpl implements ProductService {
         if (product == null) {
             return list;
         }
+        ProductDao dao = (ProductDao) productDao;
         try {
-            Optional<Product> optionalProduct = productDao.findProductBuyers(product);
+            Optional<Product> optionalProduct = dao.findProductBuyers(product);
             if (optionalProduct.isPresent()) {
                 list = optionalProduct.get().getBuyers();
             }

@@ -1,7 +1,6 @@
 package com.aston_rest_api.model;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class Product {
@@ -11,6 +10,7 @@ public class Product {
      private int amount;
      private ProductDescription description;
      private List<User> buyers;
+     private List<Sale> orders;
 
      private Product(ProductBuilder builder) {
           this.id= builder.idProduct;
@@ -18,6 +18,7 @@ public class Product {
           this.productPrice = builder.productPrice;
           this.amount = builder.amount;
           this.buyers=builder.buyers;
+          this.orders =builder.sales;
           this.description= builder.description;
      }
 
@@ -69,6 +70,14 @@ public class Product {
           this.buyers = buyers;
      }
 
+     public List<Sale> getOrders() {
+          return orders;
+     }
+
+     public void setOrders(List<Sale> orders) {
+          this.orders = orders;
+     }
+
      @Override
      public boolean equals(Object o) {
           if (this == o) return true;
@@ -102,6 +111,7 @@ public class Product {
           private int amount;
           private ProductDescription description;
           private List<User>buyers;
+          private List<Sale>sales;
 
           public ProductBuilder(long idProduct) {
                this.idProduct = idProduct;
@@ -123,6 +133,10 @@ public class Product {
           }
           public ProductBuilder setBuyers(List<User>buyers) {
                this.buyers = buyers;
+               return this;
+          }
+          public ProductBuilder setSales(List<Sale>sales) {
+               this.sales = sales;
                return this;
           }
           public ProductBuilder setProductDescription(ProductDescription description){

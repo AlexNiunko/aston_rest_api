@@ -5,18 +5,19 @@ import com.aston_rest_api.dao.ProductDao;
 import com.aston_rest_api.dao.mapper.ListResultSetMapper;
 import com.aston_rest_api.dao.mapper.ResultSetMapper;
 import com.aston_rest_api.dao.mapper.impl.ProductResultSetMapperImpl;
+import com.aston_rest_api.dao.mapper.impl.SaleResultSetMapperImpl;
 import com.aston_rest_api.db.ConnectionManagerImpl;
 import com.aston_rest_api.exception.DaoException;
 import com.aston_rest_api.model.Product;
+import com.aston_rest_api.model.Sale;
 import com.aston_rest_api.model.User;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
-public class ProductDaoImpl extends BaseDao<Product> implements ProductDao {
+public class ProductDaoImpl implements BaseDao<Product>, ProductDao {
 
     public static final String INSERT_PRODUCT =
             """
@@ -58,10 +59,15 @@ public class ProductDaoImpl extends BaseDao<Product> implements ProductDao {
                     JOIN tool_box.users u ON u.user_id=s.buyer_id
                     WHERE p.id_product=? 
                     """;
+    public static final String FIND_ALL_PRODUCT_ORDERS =
+            """
+                    SELECT*FROM tool_box.sales WHERE product_id=?
+                    """;
 
     private ConnectionManagerImpl connectionManager;
-    private ResultSetMapper resultSetMapper = ProductResultSetMapperImpl.getInstance();
-    ;
+    private ResultSetMapper productResultSetMapper = ProductResultSetMapperImpl.getInstance();
+    private ResultSetMapper saleResultSetSaleMapper=  SaleResultSetMapperImpl.getInstance();
+
 
 
     public ProductDaoImpl(ConnectionManagerImpl connectionManager) {
@@ -135,7 +141,7 @@ public class ProductDaoImpl extends BaseDao<Product> implements ProductDao {
         try (Connection connection = connectionManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(FIND_ALL_PRODUCTS);
              ResultSet resultSet = statement.executeQuery()) {
-            productList = resultSetMapper.mapListItems(resultSet);
+            productList = productResultSetMapper.mapListItems(resultSet);
         } catch (SQLException e) {
             throw new DaoException("Failed to find all products " + e);
         }
@@ -183,7 +189,7 @@ public class ProductDaoImpl extends BaseDao<Product> implements ProductDao {
              PreparedStatement statement = connection.prepareStatement(FIND_PRODUCT_BY_ID)) {
             statement.setLong(1, idProduct);
             try (ResultSet resultSet = statement.executeQuery()) {
-                optionalProduct = resultSetMapper.mapItem(resultSet);
+                optionalProduct = productResultSetMapper.mapItem(resultSet);
             }
         } catch (SQLException e) {
             throw new DaoException("Failed to find product by id " + e);
@@ -203,15 +209,35 @@ public class ProductDaoImpl extends BaseDao<Product> implements ProductDao {
              PreparedStatement statement = connection.prepareStatement(FIND_ALL_PRODUCT_BUYERS)) {
             statement.setLong(1, product.getId());
             try (ResultSet resultSet = statement.executeQuery()) {
-                ListResultSetMapper<User> listResultSetMapper = (ListResultSetMapper<User>) resultSetMapper;
+                ListResultSetMapper<User> listResultSetMapper = (ListResultSetMapper<User>) productResultSetMapper;
                 buyers = listResultSetMapper.mapItemEntities(resultSet);
                 product.setBuyers(buyers);
             }
         } catch (SQLException e) {
             throw new DaoException("Failed to find product buyers " + e);
         }
-        product.setBuyers(buyers);
         optionalProduct = Optional.ofNullable(product);
+        return optionalProduct;
+    }
+
+    @Override
+    public Optional<Product> findAllProductOrders(Product product) throws DaoException {
+        Optional<Product>optionalProduct=Optional.empty();
+        if (product==null){
+            return optionalProduct;
+        }
+        List<Sale>orders=new ArrayList<>();
+        try(Connection connection= connectionManager.getConnection();
+        PreparedStatement statement=connection.prepareStatement(FIND_ALL_PRODUCT_ORDERS)) {
+            statement.setLong(1,product.getId());
+            try(ResultSet resultSet= statement.executeQuery()){
+                orders=saleResultSetSaleMapper.mapListItems(resultSet);
+                product.setOrders(orders);
+            }
+        }catch (SQLException e){
+            throw new DaoException("Failed to find product orders" +e);
+        }
+        optionalProduct=Optional.ofNullable(product);
         return optionalProduct;
     }
 }

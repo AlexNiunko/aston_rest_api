@@ -1,5 +1,8 @@
 package com.aston_rest_api.service.impl;
 
+import com.aston_rest_api.dao.BaseDao;
+import com.aston_rest_api.dao.ProductDao;
+import com.aston_rest_api.dao.SaleDao;
 import com.aston_rest_api.dao.daoimpl.ProductDaoImpl;
 import com.aston_rest_api.dao.daoimpl.SaleDaoImpl;
 import com.aston_rest_api.exception.DaoException;
@@ -14,10 +17,10 @@ import java.util.List;
 import java.util.Optional;
 
 public class SaleServiceImpl implements SaleService {
-    private ProductDaoImpl productDao;
-    private SaleDaoImpl saleDao;
+    private BaseDao productDao;
+    private BaseDao saleDao;
 
-    public SaleServiceImpl(ProductDaoImpl productDao, SaleDaoImpl saleDao) {
+    public SaleServiceImpl(BaseDao productDao, BaseDao saleDao) {
         this.productDao = productDao;
         this.saleDao = saleDao;
     }
@@ -28,8 +31,9 @@ public class SaleServiceImpl implements SaleService {
         if (sale==null){
             return result;
         }
+        ProductDao dao=(ProductDao) productDao;
         try {
-            Optional<Product>optionalProduct=productDao.findProductById(sale.getProductId());
+            Optional<Product>optionalProduct=dao.findProductById(sale.getProductId());
             if (optionalProduct.isPresent() && (optionalProduct.get().getAmount()-sale.getAmountSale())>0){
                 result=saleDao.insert(sale);
             }
@@ -84,8 +88,9 @@ public class SaleServiceImpl implements SaleService {
         if (date==null){
             return saleList;
         }
+        SaleDao dao=(SaleDao) saleDao;
         try{
-            saleList=saleDao.findSalesByDate(date);
+            saleList=dao.findSalesByDate(date);
         }catch (DaoException e){
             throw new ServiceException("Failed to find sales by date "+e);
         }
@@ -98,8 +103,9 @@ public class SaleServiceImpl implements SaleService {
         if (product==null){
             return saleList;
         }
+        SaleDao dao=(SaleDao) saleDao;
         try{
-            saleList=saleDao.findSalesByProduct(product);
+            saleList=dao.findSalesByProduct(product);
         }catch (DaoException e){
             throw new ServiceException("Failed to find sales by date "+e);
         }
