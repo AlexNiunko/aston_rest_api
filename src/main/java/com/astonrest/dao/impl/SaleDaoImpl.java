@@ -65,7 +65,7 @@ public class SaleDaoImpl implements BaseDao<Sale>, SaleDao {
 
 
     private ConnectionManager connectionManager;
-    private ResultSetMapper resultSetMapper = SaleResultSetMapperImpl.getInstance();
+    private ResultSetMapper<Sale> resultSetMapper = SaleResultSetMapperImpl.getInstance();
     private static SaleDao saleDao;
 
     public static SaleDao getSaleDao(ConnectionManager connectionManager) {
@@ -181,13 +181,7 @@ public class SaleDaoImpl implements BaseDao<Sale>, SaleDao {
             try (PreparedStatement statementSale = connection.prepareStatement(INSERT_SALE);
                  PreparedStatement statementProduct = connection.prepareStatement(UPDATE_AMOUNT_OF_PRODUCT)) {
                 connection.setAutoCommit(false);
-                statementSale.setLong(1, sale.getId());
-                statementSale.setLong(2, sale.getBuyerId());
-                statementSale.setLong(3, sale.getProductId());
-                statementSale.setDate(4, Date.valueOf(sale.getDateOfSale()));
-                statementSale.setInt(5, sale.getAmountSale());
-                statementProduct.setInt(1, sale.getAmountSale());
-                statementProduct.setLong(2, sale.getProductId());
+                inputDataInsert(sale, statementSale, statementProduct);
                 result = statementSale.executeUpdate() == 1 && statementProduct.executeUpdate() == 1;
                 connection.commit();
             } catch (SQLException e) {
@@ -200,5 +194,15 @@ public class SaleDaoImpl implements BaseDao<Sale>, SaleDao {
             throw new DaoException("Failed to add new sale " + e);
         }
         return result;
+    }
+
+    private static void inputDataInsert(Sale sale, PreparedStatement statementSale, PreparedStatement statementProduct) throws SQLException {
+        statementSale.setLong(1, sale.getId());
+        statementSale.setLong(2, sale.getBuyerId());
+        statementSale.setLong(3, sale.getProductId());
+        statementSale.setDate(4, Date.valueOf(sale.getDateOfSale()));
+        statementSale.setInt(5, sale.getAmountSale());
+        statementProduct.setInt(1, sale.getAmountSale());
+        statementProduct.setLong(2, sale.getProductId());
     }
 }

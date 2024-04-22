@@ -20,7 +20,7 @@ public class ProductResultSetMapperImpl implements ResultSetMapper<Product>, Lis
     private ProductResultSetMapperImpl() {
     }
 
-    public static ResultSetMapper getInstance() {
+    public static ResultSetMapper<Product> getInstance() {
         return instance;
     }
 

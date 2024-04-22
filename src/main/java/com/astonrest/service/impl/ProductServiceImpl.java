@@ -13,7 +13,7 @@ import java.util.*;
 public class ProductServiceImpl implements ProductService {
 
     private ProductDao productDao;
-    private BaseDao baseDao;
+    private BaseDao<Product> baseDao;
     private static ProductService productService;
 
     public static ProductService getProductService(ProductDao productDao) {

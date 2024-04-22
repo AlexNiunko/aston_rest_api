@@ -14,7 +14,7 @@ import java.util.Optional;
 
 public class UserServiceImpl implements UserService {
 
-    private BaseDao userBaseDao;
+    private BaseDao<User> userBaseDao;
     private UserDao userDao;
     private static UserService userService;
     public static UserService getUserService(UserDao userDao){

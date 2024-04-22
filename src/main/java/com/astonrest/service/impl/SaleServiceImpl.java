@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class SaleServiceImpl implements SaleService {
-    private BaseDao productBaseDao;
-    private BaseDao saleBaseDao;
+    private BaseDao<Product> productBaseDao;
+    private BaseDao<Sale> saleBaseDao;
     private ProductDao productDao;
     private SaleDao saleDao;
     private static SaleService saleService;

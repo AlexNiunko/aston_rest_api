@@ -11,12 +11,12 @@ import java.util.*;
 
 public class SaleResultSetMapperImpl implements ResultSetMapper<Sale> {
 
-    private static ResultSetMapper instance = new SaleResultSetMapperImpl();
+    private static ResultSetMapper<Sale> instance = new SaleResultSetMapperImpl();
 
     private SaleResultSetMapperImpl() {
     }
 
-    public static ResultSetMapper getInstance() {
+    public static ResultSetMapper<Sale> getInstance() {
         return instance;
     }
 

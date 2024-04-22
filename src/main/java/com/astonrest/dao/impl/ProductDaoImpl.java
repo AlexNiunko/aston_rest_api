@@ -89,8 +89,8 @@ public class ProductDaoImpl implements BaseDao<Product>, ProductDao {
                     """;
 
     private ConnectionManager connectionManager;
-    private ResultSetMapper productResultSetMapper = ProductResultSetMapperImpl.getInstance();
-    private ResultSetMapper saleResultSetSaleMapper = SaleResultSetMapperImpl.getInstance();
+    private ResultSetMapper<Product> productResultSetMapper = ProductResultSetMapperImpl.getInstance();
+    private ResultSetMapper<Sale> saleResultSetSaleMapper = SaleResultSetMapperImpl.getInstance();
     private static ProductDao productDao;
 
     public static ProductDao getProductDao(ConnectionManager connectionManager) {
@@ -214,16 +214,7 @@ public class ProductDaoImpl implements BaseDao<Product>, ProductDao {
             try (PreparedStatement productStatement = connection.prepareStatement(INSERT_PRODUCT);
                  PreparedStatement descriptionStatement = connection.prepareStatement(INSERT_PRODUCT_DESCRIPTION)) {
                 connection.setAutoCommit(false);
-                productStatement.setLong(1, product.getId());
-                productStatement.setString(2, product.getProductName());
-                productStatement.setDouble(3, product.getProductPrice());
-                productStatement.setInt(4, product.getAmount());
-                descriptionStatement.setLong(1, product.getDescription().getId());
-                descriptionStatement.setLong(2, product.getDescription().getProductID());
-                descriptionStatement.setString(3, product.getDescription().getCountryOfOrigin());
-                descriptionStatement.setString(4, product.getDescription().getType());
-                descriptionStatement.setString(5, product.getDescription().getBrand());
-                descriptionStatement.setDate(6, Date.valueOf(product.getDescription().getIssueDate()));
+                inputDataInsert(product, productStatement, descriptionStatement);
                 result = (productStatement.executeUpdate() == 1 && descriptionStatement.executeUpdate() == 1);
                 connection.commit();
             } catch (SQLException e) {
@@ -238,14 +229,25 @@ public class ProductDaoImpl implements BaseDao<Product>, ProductDao {
         return result;
     }
 
+    private static void inputDataInsert(Product product, PreparedStatement productStatement, PreparedStatement descriptionStatement) throws SQLException {
+        productStatement.setLong(1, product.getId());
+        productStatement.setString(2, product.getProductName());
+        productStatement.setDouble(3, product.getProductPrice());
+        productStatement.setInt(4, product.getAmount());
+        descriptionStatement.setLong(1, product.getDescription().getId());
+        descriptionStatement.setLong(2, product.getDescription().getProductID());
+        descriptionStatement.setString(3, product.getDescription().getCountryOfOrigin());
+        descriptionStatement.setString(4, product.getDescription().getType());
+        descriptionStatement.setString(5, product.getDescription().getBrand());
+        descriptionStatement.setDate(6, Date.valueOf(product.getDescription().getIssueDate()));
+    }
+
     private boolean isDelete(Product product) throws DaoException {
         boolean result;
         try (Connection connection = connectionManager.getConnection()) {
             try (PreparedStatement productStatement = connection.prepareStatement(DELETE_PRODUCT_BY_ID);
                  PreparedStatement descriptionStatement = connection.prepareStatement(DELETE_PRODUCT_DESCRIPTION_BY_ID)) {
-                connection.setAutoCommit(false);
-                productStatement.setLong(1, product.getId());
-                descriptionStatement.setLong(1, product.getDescription().getId());
+                inputDataDelete(product, connection, productStatement, descriptionStatement);
                 result = productStatement.executeUpdate() == 1 && descriptionStatement.executeUpdate() == 0;
                 connection.commit();
             } catch (SQLException e) {
@@ -260,21 +262,19 @@ public class ProductDaoImpl implements BaseDao<Product>, ProductDao {
         return result;
     }
 
+    private static void inputDataDelete(Product product, Connection connection, PreparedStatement productStatement, PreparedStatement descriptionStatement) throws SQLException {
+        connection.setAutoCommit(false);
+        productStatement.setLong(1, product.getId());
+        descriptionStatement.setLong(1, product.getDescription().getId());
+    }
+
     private boolean isUpdate(Product product) throws DaoException {
         boolean result;
         try (Connection connection = connectionManager.getConnection()) {
             try (PreparedStatement statementProduct = connection.prepareStatement(UPDATE_PRODUCT_BY_ID);
                  PreparedStatement statementDescription = connection.prepareStatement(UPDATE_PRODUCT_DESCRIPTION_BY_ID)) {
                 connection.setAutoCommit(false);
-                statementProduct.setString(1, product.getProductName());
-                statementProduct.setDouble(2, product.getProductPrice());
-                statementProduct.setInt(3, product.getAmount());
-                statementProduct.setLong(4, product.getId());
-                statementDescription.setString(1, product.getDescription().getCountryOfOrigin());
-                statementDescription.setString(2, product.getDescription().getType());
-                statementDescription.setString(3, product.getDescription().getBrand());
-                statementDescription.setDate(4, Date.valueOf(product.getDescription().getIssueDate()));
-                statementDescription.setLong(5, product.getDescription().getId());
+                inputDataUpdate(product, statementProduct, statementDescription);
                 result = (statementProduct.executeUpdate() == 1) || (statementDescription.executeUpdate() == 1);
                 connection.commit();
             } catch (SQLException e) {
@@ -287,5 +287,17 @@ public class ProductDaoImpl implements BaseDao<Product>, ProductDao {
             throw new DaoException("Failed to update product " + e);
         }
         return result;
+    }
+
+    private static void inputDataUpdate(Product product, PreparedStatement statementProduct, PreparedStatement statementDescription) throws SQLException {
+        statementProduct.setString(1, product.getProductName());
+        statementProduct.setDouble(2, product.getProductPrice());
+        statementProduct.setInt(3, product.getAmount());
+        statementProduct.setLong(4, product.getId());
+        statementDescription.setString(1, product.getDescription().getCountryOfOrigin());
+        statementDescription.setString(2, product.getDescription().getType());
+        statementDescription.setString(3, product.getDescription().getBrand());
+        statementDescription.setDate(4, Date.valueOf(product.getDescription().getIssueDate()));
+        statementDescription.setLong(5, product.getDescription().getId());
     }
 }

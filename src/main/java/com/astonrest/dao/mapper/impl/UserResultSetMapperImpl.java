@@ -22,7 +22,7 @@ public class UserResultSetMapperImpl implements ResultSetMapper<User>, ListResul
     private UserResultSetMapperImpl() {
     }
 
-    public static ResultSetMapper getInstance() {
+    public static ResultSetMapper<User> getInstance() {
         return instance;
     }
 
