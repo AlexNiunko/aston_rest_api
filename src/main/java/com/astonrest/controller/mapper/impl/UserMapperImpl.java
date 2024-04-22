@@ -5,12 +5,15 @@ import com.astonrest.controller.mapper.UserMapper;
 import com.astonrest.model.User;
 
 public class UserMapperImpl implements UserMapper {
-    private static UserMapperImpl mapper=new UserMapperImpl();
+    private static UserMapperImpl mapper = new UserMapperImpl();
+
     private UserMapperImpl() {
     }
-    public static UserMapperImpl getMapper(){
+
+    public static UserMapperImpl getMapper() {
         return mapper;
     }
+
     @Override
     public User map(UserDto userDto) {
         return new User
@@ -22,6 +25,7 @@ public class UserMapperImpl implements UserMapper {
                 .setUsersRole(userDto.getIsAdmin())
                 .build();
     }
+
     @Override
     public UserDto map(User user) {
         return new UserDto

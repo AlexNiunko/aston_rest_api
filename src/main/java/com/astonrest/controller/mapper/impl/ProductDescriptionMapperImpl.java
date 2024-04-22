@@ -7,12 +7,15 @@ import com.astonrest.model.ProductDescription;
 import java.time.LocalDate;
 
 public class ProductDescriptionMapperImpl implements ProductDescriptionMapper {
-    private static ProductDescriptionMapperImpl mapper=new ProductDescriptionMapperImpl();
+    private static ProductDescriptionMapperImpl mapper = new ProductDescriptionMapperImpl();
+
     private ProductDescriptionMapperImpl() {
     }
-    public static ProductDescriptionMapperImpl getMapper(){
+
+    public static ProductDescriptionMapperImpl getMapper() {
         return mapper;
     }
+
     @Override
     public ProductDescription map(ProductDescriptionDto descriptionDto) {
         return new ProductDescription

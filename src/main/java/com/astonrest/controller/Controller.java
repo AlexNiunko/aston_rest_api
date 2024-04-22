@@ -32,7 +32,7 @@ public class Controller extends HttpServlet {
             String commandStr = request.getParameter(Attributes.COMMAND.toString().toLowerCase());
             Command command = CommandType.defineCommand(commandStr.toUpperCase());
             Router router = command.execute(request);
-            if (router.getType().equals(Router.Type.FORWARD)){
+            if (router.getType().equals(Router.Type.FORWARD)) {
                 request.getRequestDispatcher(router.getPage()).forward(request, response);
             } else {
                 response.sendRedirect(router.getPage());

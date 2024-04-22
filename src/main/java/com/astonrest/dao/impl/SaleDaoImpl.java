@@ -178,20 +178,26 @@ public class SaleDaoImpl implements BaseDao<Sale>, SaleDao {
         boolean result;
         try (Connection connection = connectionManager.getConnection()) {
             connection.setAutoCommit(false);
-            try (PreparedStatement statementSale = connection.prepareStatement(INSERT_SALE);
-                 PreparedStatement statementProduct = connection.prepareStatement(UPDATE_AMOUNT_OF_PRODUCT)) {
-                connection.setAutoCommit(false);
-                inputDataInsert(sale, statementSale, statementProduct);
-                result = statementSale.executeUpdate() == 1 && statementProduct.executeUpdate() == 1;
-                connection.commit();
-            } catch (SQLException e) {
-                connection.rollback();
-                throw new DaoException("Failed to insert a new sale " + e);
-            } finally {
-                connection.setAutoCommit(true);
-            }
+            result = isResultInsertTransaction(sale, connection);
         } catch (SQLException e) {
             throw new DaoException("Failed to add new sale " + e);
+        }
+        return result;
+    }
+
+    private static boolean isResultInsertTransaction(Sale sale, Connection connection) throws SQLException, DaoException {
+        boolean result;
+        try (PreparedStatement statementSale = connection.prepareStatement(INSERT_SALE);
+             PreparedStatement statementProduct = connection.prepareStatement(UPDATE_AMOUNT_OF_PRODUCT)) {
+            connection.setAutoCommit(false);
+            inputDataInsert(sale, statementSale, statementProduct);
+            result = statementSale.executeUpdate() == 1 && statementProduct.executeUpdate() == 1;
+            connection.commit();
+        } catch (SQLException e) {
+            connection.rollback();
+            throw new DaoException("Failed to insert a new sale " + e);
+        } finally {
+            connection.setAutoCommit(true);
         }
         return result;
     }

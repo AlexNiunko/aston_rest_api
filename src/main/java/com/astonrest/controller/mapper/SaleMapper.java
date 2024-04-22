@@ -5,6 +5,7 @@ import com.astonrest.model.Sale;
 
 public interface SaleMapper {
     Sale map(SaleDto saleDto);
+
     SaleDto map(Sale sale);
 
 }

@@ -5,12 +5,15 @@ import com.astonrest.controller.mapper.ProductMapper;
 import com.astonrest.model.Product;
 
 public class ProductMapperImpl implements ProductMapper {
-    private static ProductMapperImpl mapper=new ProductMapperImpl();
+    private static ProductMapperImpl mapper = new ProductMapperImpl();
+
     private ProductMapperImpl() {
     }
-    public static ProductMapperImpl getMapper(){
+
+    public static ProductMapperImpl getMapper() {
         return mapper;
     }
+
     @Override
     public Product map(ProductDto productDto) {
         return new Product

@@ -5,5 +5,6 @@ import com.astonrest.model.User;
 
 public interface UserMapper {
     User map(UserDto userDto);
+
     UserDto map(User user);
 }

@@ -211,20 +211,26 @@ public class ProductDaoImpl implements BaseDao<Product>, ProductDao {
     private boolean isInsert(Product product) throws DaoException {
         boolean result;
         try (Connection connection = connectionManager.getConnection()) {
-            try (PreparedStatement productStatement = connection.prepareStatement(INSERT_PRODUCT);
-                 PreparedStatement descriptionStatement = connection.prepareStatement(INSERT_PRODUCT_DESCRIPTION)) {
-                connection.setAutoCommit(false);
-                inputDataInsert(product, productStatement, descriptionStatement);
-                result = (productStatement.executeUpdate() == 1 && descriptionStatement.executeUpdate() == 1);
-                connection.commit();
-            } catch (SQLException e) {
-                connection.rollback();
-                throw new DaoException("Failed to insert new product " + e);
-            } finally {
-                connection.setAutoCommit(true);
-            }
+            result = isResultInsertTransaction(product, connection);
         } catch (SQLException e) {
             throw new DaoException("Failed to insert product " + e);
+        }
+        return result;
+    }
+
+    private static boolean isResultInsertTransaction(Product product, Connection connection) throws SQLException, DaoException {
+        boolean result;
+        try (PreparedStatement productStatement = connection.prepareStatement(INSERT_PRODUCT);
+             PreparedStatement descriptionStatement = connection.prepareStatement(INSERT_PRODUCT_DESCRIPTION)) {
+            connection.setAutoCommit(false);
+            inputDataInsert(product, productStatement, descriptionStatement);
+            result = (productStatement.executeUpdate() == 1 && descriptionStatement.executeUpdate() == 1);
+            connection.commit();
+        } catch (SQLException e) {
+            connection.rollback();
+            throw new DaoException("Failed to insert new product " + e);
+        } finally {
+            connection.setAutoCommit(true);
         }
         return result;
     }
@@ -245,19 +251,25 @@ public class ProductDaoImpl implements BaseDao<Product>, ProductDao {
     private boolean isDelete(Product product) throws DaoException {
         boolean result;
         try (Connection connection = connectionManager.getConnection()) {
-            try (PreparedStatement productStatement = connection.prepareStatement(DELETE_PRODUCT_BY_ID);
-                 PreparedStatement descriptionStatement = connection.prepareStatement(DELETE_PRODUCT_DESCRIPTION_BY_ID)) {
-                inputDataDelete(product, connection, productStatement, descriptionStatement);
-                result = productStatement.executeUpdate() == 1 && descriptionStatement.executeUpdate() == 0;
-                connection.commit();
-            } catch (SQLException e) {
-                connection.rollback();
-                throw new DaoException("Failed to delete product or product description " + e);
-            } finally {
-                connection.setAutoCommit(true);
-            }
+            result = isResultDeleteTransaction(product, connection);
         } catch (SQLException e) {
             throw new DaoException("Failed delete product " + e);
+        }
+        return result;
+    }
+
+    private static boolean isResultDeleteTransaction(Product product, Connection connection) throws SQLException, DaoException {
+        boolean result;
+        try (PreparedStatement productStatement = connection.prepareStatement(DELETE_PRODUCT_BY_ID);
+             PreparedStatement descriptionStatement = connection.prepareStatement(DELETE_PRODUCT_DESCRIPTION_BY_ID)) {
+            inputDataDelete(product, connection, productStatement, descriptionStatement);
+            result = productStatement.executeUpdate() == 1 && descriptionStatement.executeUpdate() == 0;
+            connection.commit();
+        } catch (SQLException e) {
+            connection.rollback();
+            throw new DaoException("Failed to delete product or product description " + e);
+        } finally {
+            connection.setAutoCommit(true);
         }
         return result;
     }
@@ -271,20 +283,26 @@ public class ProductDaoImpl implements BaseDao<Product>, ProductDao {
     private boolean isUpdate(Product product) throws DaoException {
         boolean result;
         try (Connection connection = connectionManager.getConnection()) {
-            try (PreparedStatement statementProduct = connection.prepareStatement(UPDATE_PRODUCT_BY_ID);
-                 PreparedStatement statementDescription = connection.prepareStatement(UPDATE_PRODUCT_DESCRIPTION_BY_ID)) {
-                connection.setAutoCommit(false);
-                inputDataUpdate(product, statementProduct, statementDescription);
-                result = (statementProduct.executeUpdate() == 1) || (statementDescription.executeUpdate() == 1);
-                connection.commit();
-            } catch (SQLException e) {
-                connection.rollback();
-                throw new DaoException("Failed to update product " + e);
-            } finally {
-                connection.setAutoCommit(true);
-            }
+            result = isResultUpdateTransaction(product, connection);
         } catch (SQLException e) {
             throw new DaoException("Failed to update product " + e);
+        }
+        return result;
+    }
+
+    private static boolean isResultUpdateTransaction(Product product, Connection connection) throws SQLException, DaoException {
+        boolean result;
+        try (PreparedStatement statementProduct = connection.prepareStatement(UPDATE_PRODUCT_BY_ID);
+             PreparedStatement statementDescription = connection.prepareStatement(UPDATE_PRODUCT_DESCRIPTION_BY_ID)) {
+            connection.setAutoCommit(false);
+            inputDataUpdate(product, statementProduct, statementDescription);
+            result = (statementProduct.executeUpdate() == 1) || (statementDescription.executeUpdate() == 1);
+            connection.commit();
+        } catch (SQLException e) {
+            connection.rollback();
+            throw new DaoException("Failed to update product " + e);
+        } finally {
+            connection.setAutoCommit(true);
         }
         return result;
     }

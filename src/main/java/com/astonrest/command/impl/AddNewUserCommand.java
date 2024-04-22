@@ -31,7 +31,7 @@ public class AddNewUserCommand implements Command {
         String name = request.getParameter(UserArguments.NAME);
         String surname = request.getParameter(UserArguments.SURNAME);
         int role = 1;
-        UserDto userDto = new UserDto.UserDtoBuilder((long)email.length()*(long)password.length())
+        UserDto userDto = new UserDto.UserDtoBuilder((long) email.length() * (long) password.length())
                 .setLogin(email)
                 .setPassword(password)
                 .setName(name)

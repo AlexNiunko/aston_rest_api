@@ -5,5 +5,6 @@ import com.astonrest.model.ProductDescription;
 
 public interface ProductDescriptionMapper {
     ProductDescription map(ProductDescriptionDto descriptionDto);
+
     ProductDescriptionDto map(ProductDescription productDescription);
 }

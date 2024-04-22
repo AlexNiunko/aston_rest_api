@@ -7,10 +7,12 @@ import com.astonrest.model.Sale;
 import java.time.LocalDate;
 
 public class SaleMapperImpl implements SaleMapper {
-    private static SaleMapperImpl mapper=new SaleMapperImpl();
+    private static SaleMapperImpl mapper = new SaleMapperImpl();
+
     private SaleMapperImpl() {
     }
-    public static SaleMapperImpl getMapper(){
+
+    public static SaleMapperImpl getMapper() {
         return mapper;
     }
 
